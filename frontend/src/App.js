@@ -1,12 +1,13 @@
-import logo from './logo.svg';
 import './App.css';
 import io from 'socket.io-client';
 import { useContext, useEffect, useState } from 'react';
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINTS = ["http://localhost:5000",
+  "http://192.168.1.9:5000"
+];
 
 function App() {
-  var socket = io(ENDPOINT);
+  var socket = io(ENDPOINTS[1]);
   const [text,setText] = useState("");
   let [status, setStatus] = useState(false);
   let [joinChat, setJoinChat] = useState(false);
@@ -19,6 +20,7 @@ function App() {
     updateMessage();
     socket.emit('setup','hello');  
     socket.on('message-received',updateMessage); 
+    setStatus(false);
   },[status])
 
   useEffect(()=>{
@@ -28,7 +30,7 @@ function App() {
   })
 
   const updateMessage = ()=>{
-    fetch('http://localhost:5000/message.txt')
+    fetch(`${ENDPOINTS[1]}/message.txt`)
     .then((response)=>{
       if (!response.ok) {
         throw new Error("HTTP error " + response.status);
@@ -49,9 +51,11 @@ function App() {
     socket.emit('join chat',12345);
     console.log('Chat Room Joined');
     setJoinChat(true);
+    setStatus(true);
   }
 
   const triggerSocket = ()=>{
+    updateMessage();
     socket.emit("button-clicked");
   }
 

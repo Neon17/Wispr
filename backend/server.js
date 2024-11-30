@@ -9,7 +9,8 @@ let readFile = fs.readFileSync('message.txt','utf8');
 const app = express();
 const corsOptions = {
   origin : [
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://192.168.1.9:3000"
   ]
 }
 
@@ -42,7 +43,7 @@ app.get('/message.txt',(req,res)=>{
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { 
   cors: {
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000","http://192.168.1.9:3000"],
     methods: ["GET","POST"]
   }
  });
