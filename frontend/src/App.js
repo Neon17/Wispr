@@ -3,20 +3,29 @@ import './App.css';
 import io from 'socket.io-client';
 import { useContext, useEffect, useState } from 'react';
 
+const ENDPOINT = "http://localhost:5000";
+
 function App() {
-  const ENDPOINT = "http://localhost:5000";
-  const socket = io(ENDPOINT);
+  var socket = io(ENDPOINT);
   const [text,setText] = useState("");
+  let [status, setStatus] = useState(false);
+  let [joinChat, setJoinChat] = useState(false);
 
   const changeText = (event)=>{
     setText(event.target.value);
   }
 
   useEffect(()=>{
+    updateMessage();
     socket.emit('setup','hello');  
     socket.on('message-received',updateMessage); 
-  })
+  },[status])
 
+  useEffect(()=>{
+    socket.on('message-received', (message)=>{
+      setText(message.text);
+    })
+  })
 
   const updateMessage = ()=>{
     fetch('http://localhost:5000/message.txt')
@@ -34,12 +43,25 @@ function App() {
     })  
   }
 
+  const chatRoomJoin = ()=>{
+    let date = Date.now();
+    localStorage.setItem('id',12345);
+    socket.emit('join chat',12345);
+    console.log('Chat Room Joined');
+    setJoinChat(true);
+  }
+
   const triggerSocket = ()=>{
     socket.emit("button-clicked");
   }
 
   const sendMessage = ()=>{
-    socket.emit("message-received",text);
+    setStatus(true);
+    let message = {
+      id: 12345,
+      text: text
+    }
+    socket.emit("new-message",message);
   }
 
   // socket.on('update-message',()=>{
@@ -72,14 +94,24 @@ function App() {
         Trigger Socket
       </button>
       
-    <div className="mb-3">
-      <label htmlFor="" className="form-label"></label>
-      <textarea className="form-control"  name="" id="" rows="20" value={text} onChange={changeText}></textarea>
-    </div>
-    <button type="button" onClick={sendMessage} className="btn btn-primary" data-bs-toggle="button" aria-pressed="false" autoComplete="off">
-      Send
-    </button>
-    
+
+    {!joinChat && 
+      <button type="button" className="btn btn-primary" onClick={chatRoomJoin} data-bs-toggle="button" aria-pressed="false" autoComplete="off">
+        Join Chat
+      </button>
+    }
+
+    {joinChat && 
+      <>
+          <div className="mb-3">
+          <label htmlFor="" className="form-label"></label>
+          <textarea className="form-control"  name="" id="" rows="20" value={text} onChange={changeText}></textarea>
+        </div>
+        <button type="button" onClick={sendMessage} className="btn btn-primary" data-bs-toggle="button" aria-pressed="false" autoComplete="off">
+          Send
+        </button>
+      </>
+    }    
     
 
     </div>

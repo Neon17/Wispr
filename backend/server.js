@@ -49,15 +49,19 @@ const io = new Server(httpServer, {
 
 io.on("connection", (socket) => {
   // ...
-  console.log('connected to socket io');
   socket.on("setup",(x)=>{
-    console.log(`Setting up with ${x}`);
+    // console.log(`Setting up with ${x}`);
   })
   socket.on('button-clicked',()=>{
     console.log("Button Clicked");
   })
-  socket.on('message-received',(message)=>{
-    fs.writeFileSync('message.txt',message);
+  socket.on('join chat',(room)=>{
+    console.log("User Joined Room: "+room);
+    socket.join(room);
+  })
+  socket.on('new-message',(message)=>{
+    fs.writeFileSync('message.txt',message.text);
+    socket.in(message.id).emit('message-received',message);
     console.log('message-received');
   })
 });
