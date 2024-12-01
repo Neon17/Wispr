@@ -19,7 +19,7 @@ const messages = [
 
 const ChatInterface = () => {
   return (
-    <div className="container py-4" style={{ maxWidth: "768px" }}>
+    <div className="container-fluid py-4 bg-white" style={{ maxWidth: "768px" }}>
       {messages.map(message => (
         <div 
           key={message.id} 
