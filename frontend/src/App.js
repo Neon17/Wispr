@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import MessageDesign from './components/MessageDesign';
+import Authform from './components/Authentication/Authform';
 
 function App(){
   return (
@@ -12,6 +13,7 @@ function App(){
         <Routes>
           <Route exact path="/" element={<Home/>} />
           <Route exact path="/message-design" element={<MessageDesign/>}/>
+          <Route exact path="/auth" element={<Authform/>}/>
           <Route path='*' element={<div className='text-center mt-2'>Page Not Found</div>} />
         </Routes>
       </Router>
