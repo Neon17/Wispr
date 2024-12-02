@@ -3,10 +3,14 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require('cors');
 const fs = require('fs');
+const app = require('./app');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config({path: './config.env'});
 
 let readFile = fs.readFileSync('message.txt','utf8');
 
-const app = express();
 const corsOptions = {
   origin : [
     "http://localhost:3000",
@@ -16,30 +20,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.get('/',(req,res)=>{
-  res.send("Hello World");
-  res.end();
-})
-
-app.get('/message.txt',(req,res)=>{
-  let data;
-  try {
-    data = fs.readFileSync(__dirname + '/message.txt','utf-8');
-  }
-  catch(err){
-    console.log(err.message);
-  }
-  // res.send(r.text());
-  res.status(200);
-  res.setHeader('Content-Type','application/json');
-  res.json({
-    status: 'success',
-    data: data
-  })
-  
-  res.end();
-})
-
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { 
   cors: {
@@ -47,6 +27,14 @@ const io = new Server(httpServer, {
     methods: ["GET","POST"]
   }
  });
+
+
+mongoose.connect(process.env.CONN_STR).then((conn)=>{
+  console.log('Connected Successfully');
+}).catch((err)=>{
+  console.error(err.message);
+})
+
 
 io.on("connection", (socket) => {
   // ...
@@ -67,7 +55,7 @@ io.on("connection", (socket) => {
   })
 });
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 httpServer.listen(port,()=>{
   console.log(`Listening at http://localhost:${port}`);
 });
