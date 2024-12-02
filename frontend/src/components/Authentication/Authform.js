@@ -65,8 +65,8 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="container-fluid min-vh-100 d-flex align-items-center justify-content-center" >
-      <div className="card shadow-lg" style={{ maxWidth: '500px', width: '100%', borderRadius: '15px' }}>
+    <div className="container-fluid mt-5 d-flex align-items-center justify-content-center " >
+      <div className="card shadow-lg" style={{ maxWidth: '500px', width: '100%', borderRadius: '20px' }}>
         <div className="card-body p-5">
           <div className="text-center mb-4">
             <i className="fas fa-comments text-primary mb-3" style={{ fontSize: '2.5rem' }}></i>
