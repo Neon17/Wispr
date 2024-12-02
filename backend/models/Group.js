@@ -4,10 +4,10 @@ const groupSchema = {
     'name': {
         type: String,
     },
-    'members': {
+    'members': [{
         type: String,
         required: [true, 'At least two member required to form group']
-    },
+    }],
     'createdAt': {
         type: String,
         required: true,
