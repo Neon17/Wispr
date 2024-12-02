@@ -9,8 +9,6 @@ const dotenv = require('dotenv');
 
 dotenv.config({path: './config.env'});
 
-let readFile = fs.readFileSync('message.txt','utf8');
-
 const corsOptions = {
   origin : [
     "http://localhost:3000",
