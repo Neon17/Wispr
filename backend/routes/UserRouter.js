@@ -8,7 +8,10 @@ const userController = require('../controllers/UserController');
 userRouter.post('/login',authController.login);
 userRouter.post('/signup',authController.signup);
 
-userRouter.route('/')
-    .get(protect,userController.getAllUsers)
+userRouter.get('/',protect,userController.getAllUsers)
+userRouter.get('/showAllGroupList',protect,userController.showAllGroupList);
+userRouter.post('/addGroup',protect,userController.createGroup);
+userRouter.post('/getAllMessages',protect,userController.getAllMessages);
+userRouter.post('/sendMessage',protect,userController.sendMessage);
 
 module.exports = userRouter;
