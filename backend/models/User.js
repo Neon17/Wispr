@@ -3,6 +3,11 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
+    'username': {
+        type: String,
+        required: [true, 'Username is required'],
+        default: `User${Date.now()}`
+    },
     'firstName': {
         type: String,
         required: [true, 'First Name is required']
@@ -34,6 +39,15 @@ const userSchema = new mongoose.Schema({
             message: "Password and Confirm Password should match"
         }
     },
+    'dob': {
+        type: Date
+    },
+    'profilePicture':{
+        type: String
+    },
+    'bio': {
+        type: String
+    }
 });
 
 userSchema.pre('save',async function(next){
