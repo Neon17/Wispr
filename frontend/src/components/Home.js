@@ -1,5 +1,6 @@
 import io from 'socket.io-client';
 import { useEffect, useState } from 'react';
+import ChatList from './Chatlist';
 
 const ENDPOINTS = ["http://localhost:5000",
   "http://192.168.1.9:5000"
@@ -215,7 +216,7 @@ function App() {
               07:08 AM
             </div>
           </div>
-
+          <ChatList />
         </div>
 
 
