@@ -30,6 +30,31 @@ exports.showAllGroupList = asyncErrorHandler(async(req,res,next)=>{
     })
 })
 
+exports.showSearchUsername = asyncErrorHandler(async(req,res,next)=>{
+    let username = req.body.username;
+    let allGroups = await Group.find({});
+    let groups=[];
+    let userGroups = [];
+    let user = null;
+    allGroups.forEach((group)=>{
+        for (i=0;i<group.members.length;i++){
+            if (group.members[i]==req.user._id) {
+                groups.push(group);
+                break;
+            }
+        }
+    })
+    // groups.forEach((group)=>{
+    //     for (i=0;i<groups.length;i++){
+
+    //     }
+    // })
+    res.status(200).json({
+        status: 'success',
+        data: groups
+    })
+})
+
 exports.createGroup = asyncErrorHandler(async(req,res,next)=>{
     if (!req.body.id) throw new Error("At least one user is needed to form a group");
     if (req.body.id==req.user._id) throw new Error("You can't create group with yourself");
