@@ -1,110 +1,176 @@
 # First Chat App
 
-### Frontend
+## Frontend
 
-Frontend done in React JS
+- Built using **React JS**.
 
-### Backend
+## Backend
 
-Backend done in Node JS
+- Developed using **Node.js**.
 
-### API EndPoints
+---
 
-#### Backend APIs
+## API Endpoints
 
-URL: 'http://localhost:5000'
+### Backend APIs
 
-##### Test URL : /
+- **Base URL:** `http://localhost:5000`
 
-#### User APIs
+#### Test API
 
-URL: 'http://localhost:5000/api/v1/users
-All User APIs except Login and Signup requires authentication
-Authentication is done by JSON Web Token
-JSON Web Token is created and sent via response after successful login and signup
+- **Path:** `/`
+- **Method:** GET
 
-Response format for every successful API hit: 
-{
-  "status": "success",
-  "data": //some data array of objects
-}
-Response format for every unsuccessful API hit: 
-{
-  "status": "error",
-  "message": //some message string
-}
+---
 
-Data objects are models(tables in ORM). You can see model section for available models
+### User APIs
 
-##### Login
-Path: '/login'
-Method: POST
-Body: {
+- **Base URL:** `http://localhost:5000/api/v1/users`
+- **Authentication:** 
+  - Required for all APIs except Login and Signup.
+  - Uses **JSON Web Token (JWT)**.
+  - JWT is created and sent in the response after a successful login or signup.
+- **Response Format:**
+  - **Success:** 
+    ```json
+    {
+      "status": "success",
+      "data": [] // array of objects
+    }
+    ```
+  - **Error:** 
+    ```json
+    {
+      "status": "error",
+      "message": "error message"
+    }
+    ```
+
+---
+
+#### Login
+
+- **Path:** `/login`
+- **Method:** POST
+- **Body:**
+  ```json
+  {
     "email": "abc@gmail.com",
     "password": "12345"
-}
+  }
+    ```
+#### Signup
 
-##### Signup
-Path: '/signup'
-Method: POST
-Body: {
+- **Path:** `/signup`
+- **Method:** POST
+- **Body:**
+  ```json
+  {
     "firstName": "Ram",
     "middleName": "Bahadur",
     "lastName": "Thapa",
     "email": "ram@gmail.com",
     "password": "12345",
     "confirmPassword": "12345"
-}
+  }
+  #### Get All Users
 
-##### Get All Users
-Path: '/'
-Method: GET
+- **Path:** `/`
+- **Method:** GET
 
-##### Show All Group List
-Path: '/showAllGroupList'
-Method: GET
+---
 
-##### Add/Create Group
-Path: '/addGroup'
-Method: POST
-Body: {
+#### Show All Group List
+
+- **Path:** `/showAllGroupList`
+- **Method:** GET
+
+---
+
+#### Add/Create Group
+
+- **Path:** `/addGroup`
+- **Method:** POST
+- **Body:**
+  ```json
+  {
     "id": "674d960eca7e9f02b6df1e60"
-}
+  }
+    ```
+#### Get All Messages
 
-##### Get all Messages
-Path: '/getAllMessages'
-Method: POST
-Body: {
+- **Path:** `/getAllMessages`
+- **Method:** POST
+- **Body:**
+  ```json
+  {
     "groupId": "674db9ff66786ba2f2df8bf2"
-}
+  }
+    ```
+#### Send Message
 
-##### Send Message
-Path: '/sendMessage'
-Method: POST
-Body: {
+- **Path:** `/sendMessage`
+- **Method:** POST
+- **Body:**
+  ```json
+  {
     "groupId": "674db9ff66786ba2f2df8bf2",
     "message": "Second message is not that interesting"
-}
+  }
+    ```
+    ## Database/Models
 
+### User Model
 
-### Database/Models 
+- **Fields:**
+  - `id` (unique identifier)
+  - `firstName`
+  - `middleName`
+  - `lastName`
+  - `email`
+  - `password`
+  - `confirmPassword`
 
-#### User
-Fields: id, firstName, middleName, lastName, email, password, confirmPassword
+---
 
-#### Group
-Fields: id, name, members(array of user IDs), createdAt
+### Group Model
 
-#### Message
-Fields: id, groupId(id froom Group Model), message, dateTime
+- **Fields:**
+  - `id` (unique identifier)
+  - `name`
+  - `members` (array of user IDs)
+  - `createdAt`
 
+---
 
-### How it works
+### Message Model
 
-When user logins or signups, response is sent in json with status, token, data
-Same token is applied in request headers as authorization: "Bearer token" for every other User APIs
-All user chat group lists are shown as result of "Show All Group List" API hit
-Then user can search for another user except himself/herself with "Get All Users" API and start chat 
-When starting chat, model Group is created with members whom that user tried to chat
-Then, "Get All Messages" API is hit and all messages shown
-Message can be send by adding groupId and message to request field hitting "Send Message" API
+- **Fields:**
+  - `id` (unique identifier)
+  - `groupId` (ID from Group Model)
+  - `message`
+  - `dateTime`
+
+---
+
+## How It Works
+
+1. **User Authentication:**
+   - On **Login** or **Signup**, a response is sent with:
+     - `status`
+     - `token`
+     - `data`
+   - The `token` is used for authentication by adding it to request headers as:
+     ```
+     Authorization: "Bearer <token>"
+     ```
+
+2. **Group Management:**
+   - After login, hit **Show All Group List** API to fetch all user chat group lists.
+   - To start a new chat:
+     - Use **Get All Users** API to search for users (excluding the current user).
+     - A new **Group** model is created when initiating a chat.
+
+3. **Messaging:**
+   - Fetch all messages in a group using **Get All Messages** API.
+   - Send messages by hitting **Send Message** API with the `groupId` and `message`.
