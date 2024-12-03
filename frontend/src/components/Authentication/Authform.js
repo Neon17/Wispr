@@ -64,7 +64,7 @@ const AuthForm = () => {
       }
 
       if (isLogin){
-          axios.post('http://192.168.1.9:5000/api/v1/users/login', {
+          axios.post('http://localhost:5000/api/v1/users/login', {
             "email": formData.email,
             "password": formData.password
           }, axiosConfig).then((res)=>{
@@ -76,11 +76,14 @@ const AuthForm = () => {
             if (res.data.status=='error') setResponseError(res.data.message);
           }).catch((err)=>{
             setResponseError("Something went wrong. Please try again later!");
+            
+
+            setErrors({error: err.message});
             console.log(err);
           });
       }
       else {
-        axios.post('http://192.168.1.9:5000/api/v1/users/signup', {
+        axios.post('http://localhost:5000/api/v1/users/signup', {
           "firstName": formData.firstName,
           "middleName": formData.middleName,
           "lastName": formData.lastName,
@@ -97,6 +100,8 @@ const AuthForm = () => {
           if (res.data.status=='error') setResponseError(res.data.message);
         }).catch((err)=>{
           setResponseError("Something went wrong. Please try again later!");
+          setErrors({error: err.message});
+
           console.log(err);
         });
       }
