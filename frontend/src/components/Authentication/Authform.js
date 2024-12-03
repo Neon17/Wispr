@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -12,6 +14,8 @@ const AuthForm = () => {
     confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
+  const [responseError, setResponseError] = useState(null);
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors = {};
@@ -39,9 +43,10 @@ const AuthForm = () => {
     
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
+    } 
+    // else if (formData.password.length < 6) {
+    //   newErrors.password = 'Password must be at least 6 characters';
+    // }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -50,9 +55,50 @@ const AuthForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('Form submitted:', formData);
-      //I will call api here after you complete backend endpoints
-      //TO DO: Call API by kushal1o1
+
+      const axiosConfig = {
+        headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+      }
+
+      if (isLogin){
+          axios.post('http://192.168.1.9:5000/api/v1/users/login', {
+            "email": formData.email,
+            "password": formData.password
+          }, axiosConfig).then((res)=>{
+            if (res.data.status=='success'){
+              localStorage.setItem('token',res.data.token);
+              navigate("/",{ replace: true });
+            }
+            if (res.data.status=='error') setResponseError(res.data.message);
+          }).catch((err)=>{
+            setResponseError("Something went wrong. Please try again later!");
+            console.log(err);
+          });
+      }
+      else {
+        axios.post('http://192.168.1.9:5000/api/v1/users/signup', {
+          "firstName": formData.firstName,
+          "middleName": formData.middleName,
+          "lastName": formData.lastName,
+          "username": formData.username,
+          "email": formData.email,
+          "password": formData.password,
+          "confirmPassword": formData.confirmPassword
+        }, axiosConfig).then((res)=>{
+          if (res.data.status=='success'){
+            localStorage.setItem('token',res.data.token);
+            navigate("/",{ replace: true });
+          }
+          if (res.data.status=='error') setResponseError(res.data.message);
+        }).catch((err)=>{
+          setResponseError("Something went wrong. Please try again later!");
+          console.log(err);
+        });
+      }
+
     }
   };
 
@@ -211,10 +257,16 @@ const AuthForm = () => {
               </div>
             )}
 
+          {responseError && <div className="alert alert-danger alert-dismissible fade show" role="alert">
+            <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              {responseError}
+          </div> }
+
             <button type="submit" className="btn btn-primary w-100 mb-3 py-2">
               <i className={`fas ${isLogin ? 'fa-sign-in-alt' : 'fa-user-plus'} me-2`}></i>
               {isLogin ? 'Login' : 'Sign Up'}
             </button>
+
 
             <div className="text-center">
               <button
@@ -227,6 +279,7 @@ const AuthForm = () => {
               </button>
             </div>
           </form>
+          
         </div>
       </div>
     </div>

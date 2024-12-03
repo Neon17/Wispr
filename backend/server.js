@@ -1,22 +1,12 @@
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
-const cors = require('cors');
 const fs = require('fs');
 const app = require('./app');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
 dotenv.config({path: './config.env'});
-
-const corsOptions = {
-  origin : [
-    "http://localhost:3000",
-    "http://192.168.1.9:3000"
-  ]
-}
-
-app.use(cors(corsOptions));
 
 const httpServer = http.createServer(app);
 const io = new Server(httpServer, { 

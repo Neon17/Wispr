@@ -13,7 +13,7 @@ exports.login= asyncErrorHandler(async(req,res)=>{
     if (!req.body.email || !req.body.password) throw new Error('Email and Password required');
     let user = await User.findOne({email: req.body.email});
     if (!user) throw new Error('Invalid Email');
-    if (!user.comparePassword(req.body.password, user.password))
+    if (!await user.comparePassword(req.body.password, user.password))
         throw new Error('Invalid Password');
     const token = signToken(user._id);
     res.status(200).json({
