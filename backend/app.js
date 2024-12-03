@@ -6,6 +6,7 @@ const cors = require('cors');
 const userRouter = require('./routes/UserRouter');
 
 app.use(express.json());
+app.use(express.static('./public'));
 
 const corsOptions = {
   origin : [

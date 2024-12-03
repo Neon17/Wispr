@@ -15,4 +15,7 @@ userRouter.post('/addGroup',protect,userController.createGroup);
 userRouter.post('/getAllMessages',protect,userController.getAllMessages);
 userRouter.post('/sendMessage',protect,userController.sendMessage);
 
+userRouter.post('/uploadProfilePicture',protect,userController.uploadProfilePicture);
+userRouter.get('/profile',protect,userController.profile);
+
 module.exports = userRouter;

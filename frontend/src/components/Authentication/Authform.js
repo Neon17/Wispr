@@ -69,6 +69,7 @@ const AuthForm = () => {
             "password": formData.password
           }, axiosConfig).then((res)=>{
             if (res.data.status=='success'){
+              localStorage.removeItem('token');
               localStorage.setItem('token',res.data.token);
               navigate("/",{ replace: true });
             }
@@ -89,6 +90,7 @@ const AuthForm = () => {
           "confirmPassword": formData.confirmPassword
         }, axiosConfig).then((res)=>{
           if (res.data.status=='success'){
+            localStorage.removeItem('token');
             localStorage.setItem('token',res.data.token);
             navigate("/",{ replace: true });
           }

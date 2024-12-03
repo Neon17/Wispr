@@ -121,7 +121,7 @@ function App() {
 
           <div className='searchBoxContainer p-2 px-3 d-flex'>
               <input type="text" name="" id="" className="form-control rounded-0 rounded-start-2" placeholder="Search for User" aria-describedby="helpId"/>
-            <button type="button" className="btn btn-primary rounded-0 rounded-end-2" data-bs-toggle="button" aria-pressed="false" autocomplete="off">
+            <button type="button" className="btn btn-primary rounded-0 rounded-end-2" data-bs-toggle="button" aria-pressed="false" autoComplete="off">
               <i className="fa-solid fa-magnifying-glass"></i>
             </button>
             
