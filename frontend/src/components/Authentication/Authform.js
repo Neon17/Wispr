@@ -64,7 +64,7 @@ const AuthForm = () => {
       }
 
       if (isLogin){
-          axios.post('http://192.168.1.9:5000/api/v1/users/login', {
+          axios.post('http://localhost:5000/api/v1/users/login', {
             "email": formData.email,
             "password": formData.password
           }, axiosConfig).then((res)=>{
@@ -79,7 +79,7 @@ const AuthForm = () => {
           });
       }
       else {
-        axios.post('http://192.168.1.9:5000/api/v1/users/signup', {
+        axios.post('http://localhost:5000/api/v1/users/signup', {
           "firstName": formData.firstName,
           "middleName": formData.middleName,
           "lastName": formData.lastName,
