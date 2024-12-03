@@ -98,6 +98,8 @@ const AuthForm = () => {
           if (res.data.status=='error') setResponseError(res.data.message);
         }).catch((err)=>{
           setResponseError("Something went wrong. Please try again later!");
+          setErrors({error: err.message});
+
           console.log(err);
         });
       }
