@@ -14,6 +14,7 @@ userRouter.get('/showSearchUsername',protect,userController.showSearchUsername);
 userRouter.post('/addGroup',protect,userController.createGroup);
 userRouter.post('/getAllMessages',protect,userController.getAllMessages);
 userRouter.post('/sendMessage',protect,userController.sendMessage);
+userRouter.post('/addMemberInGroup',protect,userController.addMemberInGroup);
 
 userRouter.post('/uploadProfilePicture',protect,userController.uploadProfilePicture);
 userRouter.get('/profile',protect,userController.profile);
