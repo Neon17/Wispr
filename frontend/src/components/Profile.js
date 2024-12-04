@@ -38,6 +38,8 @@ export default function Profile() {
         console.log(localStorage.getItem('token'));
         axios.get('http://localhost:5000/api/v1/users/profile', axiosConfig)
         .then((res)=>{
+            // TO DO: api update involve dob,bio,and profile image
+            // setProfile(res.data.data);
             console.log(res.data);
         }).catch((err)=>{
             console.log(err.message);
