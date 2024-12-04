@@ -1,4 +1,19 @@
-# First Chat App
+# 🌟 Wispr - Modern Messaging Platform
+
+<p align="center">
+  <img src="https://github.com/Neon17/First-Chat-App/blob/main/frontend/src/components/LandingPage/WisprLogo.svg" alt="Wispr Logo">
+</p>
+Wispr is a modern, secure, and intuitive chat application  that transforms the way people communicate online.
+
+## ✨ Features
+
+- **Real-time Messaging**: Experience instant message delivery with cutting-edge infrastructure
+- **End-to-End Encryption**: Military-grade encryption for secure communications
+- **Smart Organization**: AI-powered chat organization keeps conversations clean and relevant
+- **Modern UI**: Clean, responsive design with smooth animations
+- **Cross-Platform**: Available on web, with mobile apps coming soon
+
+## 🚀 Quick Start
 
 ## Frontend
 
