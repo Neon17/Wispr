@@ -24,11 +24,16 @@ exports.profile = asyncErrorHandler(async(req,res,next)=>{
 })
 
 exports.showAllGroupList = asyncErrorHandler(async(req,res,next)=>{
-    let allGroups = await Group.find({});
+
+    let allGroups = await Group.find({})
+        .populate({
+            path: 'members'
+        }).exec();
+    
     let groups=[];
     allGroups.forEach((group)=>{
         for (i=0;i<group.members.length;i++){
-            if (group.members[i]==req.user._id) {
+            if (group.members[i]._id.toString()==req.user._id.toString()) {
                 groups.push(group);
                 break;
             }

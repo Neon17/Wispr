@@ -1,15 +1,13 @@
 const mongoose = require('mongoose');
 
 const groupSchema = new mongoose.Schema({
-    'id': {
-        type: mongoose.Types.ObjectId
-    },
     'name': {
         type: String,
     },
     'members': [{
-        type: String,
-        required: [true, 'At least two member required to form group']
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'At least two member required to form group'],
+        ref: 'User'
     }],
     'createdAt': {
         type: String,

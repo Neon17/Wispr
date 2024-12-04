@@ -1,9 +1,15 @@
 const mongoose = require('mongoose');
 
 const messageSchema = new mongoose.Schema({
+    senderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'Sender ID is required'],
+        ref: 'User'
+    },
     groupId: {
-        type: mongoose.Schema.ObjectId,
-        required: [true, 'Group is required to send and receive message']
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'Group is required to send and receive message'],
+        ref: 'Group'
     },
     message: {
         type: String,
@@ -17,6 +23,6 @@ const messageSchema = new mongoose.Schema({
     // we can make attachments, emoji later
 })
 
-const Message = mongoose.model('Messages',messageSchema);
+const Message = mongoose.model('Message',messageSchema);
 
 module.exports = Message;
