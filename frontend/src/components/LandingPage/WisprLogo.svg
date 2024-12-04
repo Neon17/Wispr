@@ -1,5 +1,4 @@
-<p align="center">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="300" height="300">
     <!-- Background Circle -->
     <defs>
         <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -45,5 +44,4 @@
         />
         </path>
     </g>
-    </svg>
-</p>
+</svg>

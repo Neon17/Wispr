@@ -1,7 +1,8 @@
 # 🌟 Wispr - Modern Messaging Platform
 
-![Wispr Logo](https://github.com/Neon17/First-Chat-App/blob/main/frontend/src/components/LandingPage/WisprLogo.svg)
-
+<p align="center">
+  <img src="https://github.com/Neon17/First-Chat-App/blob/main/frontend/src/components/LandingPage/WisprLogo.svg" alt="Wispr Logo">
+</p>
 Wispr is a modern, secure, and intuitive chat application  that transforms the way people communicate online.
 
 ## ✨ Features
