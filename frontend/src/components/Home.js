@@ -323,7 +323,7 @@ function App() {
                     className="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
                     style={{ width: '50px', height: '50px', fontSize: '18px' }}
                   >
-                    K
+                    {message.senderId.firstName[0]}
                   </div>
                   <span
                     className="position-absolute bottom-0 end-0 rounded-circle bg-success"
