@@ -94,7 +94,7 @@ exports.fetchAllUnknownUsers = asyncErrorHandler(async(req,res,next)=>{
         let st = 0;
         for (i=0;i<groups.length;i++){
             if (groups[i].members.length!=2) continue;
-            if ((groups[i].members[i]._id.toString()==user._id.toString())){
+            if ((groups[i].members[0]._id.toString()==user._id.toString())||((groups[i].members[1]._id.toString()==user._id.toString()))){
                 st = 1; break;
             }
         }
