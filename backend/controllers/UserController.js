@@ -191,15 +191,12 @@ exports.getAllMessages = asyncErrorHandler(async(req,res,next)=>{
     let groupMessages = await Message.find({groupId: req.body.groupId})
         .populate('senderId').exec();
     let messages = JSON.parse(JSON.stringify(groupMessages));
-    if (messages.length>1){
-        for (i=0;i<messages.length;i++){
-            if (messages[i].senderId._id.toString()==req.user._id.toString())
-                messages[i].isUser = true;
-            else messages[i].isUser = false;
-        }
+    for (i=0;i<messages.length;i++){
+        if (messages[i].senderId._id.toString()==req.user._id.toString())
+            messages[i].isUser = true;
+        else messages[i].isUser = false;
     }
-    else if (messages.senderId._id.toString()==req.user._id.toString())
-        messages.isUser = true;
+    if (messages.length==0) messages = null;
     res.status(200).json({
         status: 'success',
         data: messages

@@ -63,7 +63,11 @@ function App() {
       "id": id,
     }, axiosConfig).then((res)=>{
       console.log(res.data);
+      fetchGroups();
+      fetchUsers();
       setJoinChat(false);
+      setUserId(null);
+      setGroupId(res.data.data._id);
     }).catch((err)=>{
       console.log(err.message);
     })
