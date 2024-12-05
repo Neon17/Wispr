@@ -30,7 +30,7 @@ const WisprLanding = () => {
 
       {/* Global Styles */}
 
-      <style jsx>{`
+      <style jsx='true'>{`
         .bg-gradient {
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         }

@@ -4,6 +4,60 @@ const Message = require('../models/Message');
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 
 
+const getJoinedGroups = asyncErrorHandler(async(req,res,next)=>{
+    let allGroups = await Group.find({})
+        .populate({
+            path: 'members'
+        }).exec();
+    
+    let groups=[];
+    allGroups.forEach((group)=>{
+        for (i=0;i<group.members.length;i++){
+            if (group.members[i]._id.toString()==req.user._id.toString()) {
+                groups.push(group);
+                break;
+            }
+        }
+    })
+    return groups;
+})
+
+const nameJoinedGroups = (groups,id)=>{
+    let status = 0, groupCount = 0;
+    let groupName = "";
+    let nameCount = 0;
+    let temp;
+    for (i=0;i<groups.length;i++){
+        if (groups[i].members.length==2) status = 1;
+        nameCount = 0;
+        groupName = "";
+        if (status==1){
+            temp =  (groups[i].members[0]._id.toString()==id.toString())?1:0;
+            if (groups[i].members[temp].middleName!=null)
+                groupName = groups[i].members[temp].firstName + " "+ groups[i].members[temp].middleName + " "+ groups[i].members[temp].lastName;
+            else groupName = groups[i].members[temp].firstName + " "+ groups[i].members[temp].lastName;
+            groupCount= groupCount+1;
+        }
+        else if ((status == 0)&&(groups[i].name==null)){
+            console.log("hello");
+            for (j=0;j<3;j++){
+                if (groups[i].members[j]._id!=id) {
+                    if (nameCount!=0) groupName = groupName + ", ";
+                    groupName = groupName + groups[i].members[j].firstName;
+                    nameCount = nameCount+1;
+                }
+                if (nameCount==2){
+                    groupName = groupName + `+${groups[i].members.length-2}`;
+                    break;
+                }
+            }
+        }
+        if (groups[i].name==null) groups[i].name = groupName;
+        status = 0;
+    }
+    return groups;
+}
+
 exports.getAllUsers = asyncErrorHandler(async(req,res,next)=>{
     let users = await User.find({_id: {$ne:{_id: req.user._id}}});
     res.status(200).json({
@@ -24,24 +78,32 @@ exports.profile = asyncErrorHandler(async(req,res,next)=>{
 })
 
 exports.showAllGroupList = asyncErrorHandler(async(req,res,next)=>{
-
-    let allGroups = await Group.find({})
-        .populate({
-            path: 'members'
-        }).exec();
-    
-    let groups=[];
-    allGroups.forEach((group)=>{
-        for (i=0;i<group.members.length;i++){
-            if (group.members[i]._id.toString()==req.user._id.toString()) {
-                groups.push(group);
-                break;
-            }
-        }
-    })
+    let groups = await getJoinedGroups(req,res,next);
+    groups = nameJoinedGroups(groups,req.user._id);
     res.status(200).json({
         status: 'success',
         data: groups
+    })
+})
+
+exports.fetchAllUnknownUsers = asyncErrorHandler(async(req,res,next)=>{
+    // It fetches all users but not group that user has started chatting with
+    let groups = await getJoinedGroups(req,res,next);
+    let allUsers = await User.find({});
+    let users = [];
+    allUsers.forEach((user)=>{
+        let st = 0;
+        for (i=0;i<groups.length;i++){
+            if (groups[i].members.length!=2) continue;
+            if ((groups[i].members[0]._id.toString()==user._id.toString())){
+                st = 1; break;
+            }
+        }
+        if (st==0) users.push(user);
+    })
+    res.status(200).json({
+        status : 'success',
+        data: users
     })
 })
 
@@ -49,46 +111,8 @@ exports.showSearchUsername = asyncErrorHandler(async(req,res,next)=>{
     // here we have to search for direct message or group message
     // in direct message, username should be considered, if group message, name should be like username1,username2+6 others
     // let username = req.body.username;
-    let allGroups = await Group.find({})
-        .populate({
-            path: 'members',
-        }).exec();
-    let groups=[];
-    let status = 0, groupCount = 0;
-    let groupName = "";
-    let nameCount = 0;
-    allGroups.forEach((group)=>{
-        if (group.members.length==2) status = 1;
-        groupName = "";
-        for (i=0;i<group.members.length;i++){
-            if (group.members[i]._id.toString()==req.user._id.toString()) {
-                groups.push(group);
-                if (status == 1) {
-                    if (group.members[(i==1)?0:1].middleName!=null)
-                        groupName = group.members[(i==1)?0:1].firstName + " "+ group.members[(i==1)?0:1].middleName + " "+ group.members[(i==1)?0:1].lastName;
-                    else groupName = group.members[(i==1)?0:1].firstName + " "+ group.members[(i==1)?0:1].lastName;
-                }
-                groupCount= groupCount+1;
-                break;
-            }
-        }
-        nameCount = 0;
-        if ((status != 1)&&(group.name==null)){
-            for (i=0;i<3;i++){
-                if (group.members[i]._id!=req.user._id) {
-                    if (nameCount!=0) groupName = groupName + ", ";
-                    groupName = groupName + group.members[i].firstName;
-                    nameCount = nameCount+1;
-                }
-                if (nameCount==2){
-                    groupName = groupName + `+${group.members.length-2}`;
-                    break;
-                }
-            }
-        }
-        if (groupCount>0) groups[groupCount-1].name = groupName;
-        status = 0;
-    })
+    let groups = await getJoinedGroups(req,res,next);
+    groups = nameJoinedGroups(groups,req.user._id);
     res.status(200).json({
         status: 'success',
         data: groups
