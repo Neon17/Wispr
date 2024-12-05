@@ -1,6 +1,5 @@
 import io from 'socket.io-client';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import ChatList from './Chatlist';
 import ChatMessages from './ChatMessages';
 
@@ -10,11 +9,6 @@ const ENDPOINTS = ["http://localhost:5000",
 
 
 function App() {
-  const [axiosConfig] = useState({
-    headers: {
-      "Authorization": `Bearer ${localStorage.getItem('token')}`
-    }
-  });
   var socket = io(ENDPOINTS[1]);
   const [text, setText] = useState("");
   let [status, setStatus] = useState(false);

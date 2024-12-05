@@ -12,11 +12,11 @@ function App(){
       <Router future={{v7_startTransition: 'true', v7_relativeSplatPath: 'true'}}>
         <WisprNav/>
         <Routes>
-        <Route  path="/home" element={<WisprLanding/>} />
-          <Route exact path="/" element={<Home/>} />
+        <Route  path="/" element={<WisprLanding/>} />
+          <Route exact path="/home" element={localStorage.getItem('token')?<Home/>:<Authform/>} />
           <Route exact path="/auth" element={<Authform/>}/>
-          <Route exact path="/profile" element={<Profile/>} />
-          <Route path='*' element={<div className='text-center mt-2'>Page Not Found</div>} />
+          <Route exact path="/profile" element={localStorage.getItem('token')?<Profile/>:<Authform/>} />
+          <Route path='*' element={<div className='text-center p-5' style={{marginTop: '76px'}}>Page Not Found</div>} />
         </Routes>
       </Router>
     </>

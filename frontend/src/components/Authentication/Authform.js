@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 
 const AuthForm = () => {
+  let location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -71,7 +72,10 @@ const AuthForm = () => {
             if (res.data.status=='success'){
               localStorage.removeItem('token');
               localStorage.setItem('token',res.data.token);
-              navigate("/",{ replace: true });
+              if (location.pathname=='/auth')
+                navigate("/",{ replace: true });
+              else 
+                window.location.reload();
             }
             if (res.data.status=='error') setResponseError(res.data.message);
           }).catch((err)=>{
@@ -95,7 +99,10 @@ const AuthForm = () => {
           if (res.data.status=='success'){
             localStorage.removeItem('token');
             localStorage.setItem('token',res.data.token);
-            navigate("/",{ replace: true });
+            if (location.pathname=='/auth')
+              navigate("/",{ replace: true });
+            else 
+              window.location.reload();
           }
           if (res.data.status=='error') setResponseError(res.data.message);
         }).catch((err)=>{
@@ -118,7 +125,7 @@ const AuthForm = () => {
   };
 
   return (
-    <div className="container-fluid mt-5 d-flex align-items-center justify-content-center " >
+    <div className="container-fluid d-flex align-items-center justify-content-center pt-3" style={{marginTop: '76px'}}>
       <div className="card shadow-lg" style={{ maxWidth: '500px', width: '100%', borderRadius: '20px' }}>
         <div className="card-body p-5">
           <div className="text-center mb-4">

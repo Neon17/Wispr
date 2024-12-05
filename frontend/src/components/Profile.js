@@ -47,7 +47,7 @@ export default function Profile() {
     },[])
 
     return (
-        <div className="container mt-5">
+        <div className="container pt-3" style={{marginTop: '76px'}}>
         <div className="card p-4">
           <div className="row">
             <div className="col-md-3">
