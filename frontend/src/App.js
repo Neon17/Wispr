@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
-import MessageDesign from './components/MessageDesign';
 import Authform from './components/Authentication/Authform';
 import Profile from './components/Profile';
 import WisprLanding from './components/LandingPage/WisprLanding';
@@ -15,7 +14,6 @@ function App(){
         <Routes>
         <Route  path="/home" element={<WisprLanding/>} />
           <Route exact path="/" element={<Home/>} />
-          <Route exact path="/message-design" element={<MessageDesign/>}/>
           <Route exact path="/auth" element={<Authform/>}/>
           <Route exact path="/profile" element={<Profile/>} />
           <Route path='*' element={<div className='text-center mt-2'>Page Not Found</div>} />

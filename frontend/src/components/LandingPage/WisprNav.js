@@ -35,9 +35,9 @@ const WhisprNav = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link href="#features">Features</Nav.Link>
-              <Nav.Link href="#about">About</Nav.Link>
-              <Button variant="primary" className="ms-3">Get Started</Button>
+              <Nav.Link href="/features">Features</Nav.Link>
+              <Nav.Link href="/about">About</Nav.Link>
+              <Button variant="primary" href='/home' className="ms-3">Get Started</Button>
             </Nav>
           </Navbar.Collapse>
         </Container>

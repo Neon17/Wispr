@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 // karne ho yo onclickma userid dechu tyo bata gara yesko lagi
-const clickGroup = ()=>{
-    console.log('Chat Group Clicked!');
+const clickGroup = () => {
+  console.log('Chat Group Clicked!');
 }
-const ChatList = () => {
+const ChatList = (props) => {
   const [users, setUsers] = useState([]);
   const [groups, setGroups] = useState([]);
 
-  // Extract initials from a full name
-  const getInitials = (fullName) => {
-    return fullName
-      .split(' ')
-      .map((name) => name[0])
-      .join('')
-      .toUpperCase();
-  };
+  useEffect(()=>{
+    fetchGroups();
+    fetchUsers();
+  },[props.groupId, props.userId]);
 
-  const fetchGroups = async ()=>{
+  const fetchGroups = async () => {
     try {
       const token = localStorage.getItem('token'); // Extract token from localStorage
       const response = await axios.get('http://localhost:5000/api/v1/users/showAllGroupList', {
@@ -63,14 +59,24 @@ const ChatList = () => {
 
   // Render user list
   return (
-    <div>
+    <div className='border' style={{ width: '35%' }}>
+
+      <div className='searchBoxContainer p-2 px-3 d-flex'>
+        <input type="text" name="" id="" className="form-control rounded-0 rounded-start-2" placeholder="Search for User" aria-describedby="helpId" />
+        <button type="button" className="btn btn-primary rounded-0 rounded-end-2" data-bs-toggle="button" aria-pressed="false" autoComplete="off">
+          <i className="fa-solid fa-magnifying-glass"></i>
+        </button>
+
+      </div>
+
 
       <h5 className='text-center m-3'>Groups and Friends</h5>
       {groups.map((group) => (
         <div
           key={group._id}
           className="personContainer border-top border-bottom p-3"
-          onClick={() => console.log(`Clicked on group ${group._id}`)} // Handle click event
+          style={(props.groupId == group._id) ? { backgroundColor: "#d1d9ef" } : {}}
+          onClick={function () { props.groupClick(group._id) }} // Handle click event
           role="button"
         >
           {/* Profile Name */}
@@ -80,7 +86,7 @@ const ChatList = () => {
               className="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
               style={{ width: '50px', height: '50px', fontSize: '18px' }}
             >
-              {getInitials(`${group.name}`)}
+              {props.getInitials(`${group.name}`)}
             </div>
 
             {/* Name and message */}
@@ -112,7 +118,8 @@ const ChatList = () => {
         <div
           key={user._id}
           className="personContainer border-top border-bottom p-3"
-          onClick={() => console.log(`Clicked on user ${user._id}`)} // Handle click event
+          style={(props.userId == user._id) ? { backgroundColor: "#d1d9ef" } : {}}
+          onClick={function () { props.userClick(user._id) }} // Handle click event
           role="button"
         >
           {/* Profile Name */}
@@ -122,14 +129,14 @@ const ChatList = () => {
               className="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
               style={{ width: '50px', height: '50px', fontSize: '18px' }}
             >
-              {getInitials(`${user.firstName} ${user.lastName}`)}
+              {props.getInitials(`${user.firstName} ${user.lastName}`)}
             </div>
 
             {/* Name and message */}
             <div className="ms-3">
               {/* Person Name */}
               <div className="personName fw-bold" style={{ fontSize: '18px' }}>
-                {user.firstName} {user.lastName}
+                {user.firstName} {user.middleName} {user.lastName}
               </div>
               {/* Placeholder for last message */}
               <div className="personMessage text-muted" style={{ fontSize: '14px' }}>
@@ -148,6 +155,7 @@ const ChatList = () => {
           </div>
         </div>
       ))}
+
     </div>
   );
 };
