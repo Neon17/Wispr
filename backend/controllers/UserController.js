@@ -39,7 +39,6 @@ const nameJoinedGroups = (groups,id)=>{
             groupCount= groupCount+1;
         }
         else if ((status == 0)&&(groups[i].name==null)){
-            console.log("hello");
             for (j=0;j<3;j++){
                 if (groups[i].members[j]._id!=id) {
                     if (nameCount!=0) groupName = groupName + ", ";
@@ -89,13 +88,13 @@ exports.showAllGroupList = asyncErrorHandler(async(req,res,next)=>{
 exports.fetchAllUnknownUsers = asyncErrorHandler(async(req,res,next)=>{
     // It fetches all users but not group that user has started chatting with
     let groups = await getJoinedGroups(req,res,next);
-    let allUsers = await User.find({});
+    let allUsers = await User.find({_id: {$not: {$eq: req.user._id}}});
     let users = [];
     allUsers.forEach((user)=>{
         let st = 0;
         for (i=0;i<groups.length;i++){
             if (groups[i].members.length!=2) continue;
-            if ((groups[i].members[0]._id.toString()==user._id.toString())){
+            if ((groups[i].members[i]._id.toString()==user._id.toString())){
                 st = 1; break;
             }
         }
@@ -120,8 +119,18 @@ exports.showSearchUsername = asyncErrorHandler(async(req,res,next)=>{
 })
 
 exports.createGroup = asyncErrorHandler(async(req,res,next)=>{
+    //It forms 2 user group
     if (!req.body.id) throw new Error("At least one user is needed to form a group");
     if (req.body.id==req.user._id) throw new Error("You can't create group with yourself");
+    let previousGroups = await Group.find({});
+    let status = 0;
+    previousGroups.map((previousGroup)=>{
+        status = 0;
+        if (previousGroup.members.length==2){
+            if ((previousGroup.members[0].toString==req.body.id)||(previousGroup.members[1].toString==req.body.id)) 
+                throw new Error('That group already exists');
+        }
+    })
     let group = await Group.create({
         members: [req.user._id, req.body.id]
     })
@@ -179,17 +188,32 @@ exports.addMemberInGroup = asyncErrorHandler(async(req,res,next)=>{
 exports.getAllMessages = asyncErrorHandler(async(req,res,next)=>{
     //req.body contains groupId
     if (!req.body.groupId) throw new Error('Message can only be seen in the group');
-    let message = await Message.find({groupId: req.body.groupId}).sort({dateTime: -1});
+    let groupMessages = await Message.find({groupId: req.body.groupId})
+        .populate('senderId').exec();
+    let messages = JSON.parse(JSON.stringify(groupMessages));
+    if (messages.length>1){
+        for (i=0;i<messages.length;i++){
+            if (messages[i].senderId._id.toString()==req.user._id.toString())
+                messages[i].isUser = true;
+            else messages[i].isUser = false;
+        }
+    }
+    else if (messages.senderId._id.toString()==req.user._id.toString())
+        messages.isUser = true;
     res.status(200).json({
         status: 'success',
-        data: message
+        data: messages
     })
 })
 
 exports.sendMessage = asyncErrorHandler(async (req,res,next)=>{
     //req.body contains groupId, message
     if (!req.body.groupId || !req.body.message) throw new Error('Non-empty message can only be sent with the group');
-    let message = await Message.create(req.body);
+    let message = await Message.create({
+        groupId: req.body.groupId,
+        message: req.body.message,
+        senderId: req.user._id
+    });
     res.status(200).json({
         status: 'success',
         data: message

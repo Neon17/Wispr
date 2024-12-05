@@ -21,7 +21,15 @@ const messageSchema = new mongoose.Schema({
         default: Date.now()
     }
     // we can make attachments, emoji later
-})
+},
+    {toJSON: { virtuals: true }},
+    {toObject: { virtuals: true }}
+)
+
+messageSchema.virtual('isUser').get(function(id) {
+    if (id==undefined) return false;
+    return (this.senderId._id.toString==id.toString);
+});
 
 const Message = mongoose.model('Message',messageSchema);
 
