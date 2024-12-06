@@ -79,15 +79,6 @@ const ChatList = (props) => {
       </InputGroup>
     </div>
   </div>
-
-    <div className="px-1" style={{ height: 'calc(80vh - 2px)', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-      <style>
-        {`
-          .px-1::-webkit-scrollbar {
-            display: none;
-          }
-        `}
-      </style>
 {/* Users Section */}
 <h6 className="text-muted text-center pt-3 pb-2 text-uppercase border-top" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
   Friends
@@ -167,6 +158,15 @@ const ChatList = (props) => {
     ))}
   </div>
 )}
+    <div className="px-1" style={{ height: 'calc(65vh - 2px)', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <style>
+        {`
+          .px-1::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+
 
       {/* Groups Section */}
     <h6 className="text-muted text-center pt-3 pb-2 text-uppercase" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
