@@ -28,7 +28,7 @@ const WhisprNav = () => {
         <Navbar 
         expand="lg" 
         fixed="top" 
-        className={`border-bottom ${scrolled ? 'bg-white shadow-sm' : 'bg-transparent'} transition-all`}
+        className={`border-bottom ${scrolled ? 'bg-white shadow-sm' : 'bg-white'} transition-all`}
       >
         <Container>
           <Navbar.Brand href="/home" className="d-flex align-items-center">

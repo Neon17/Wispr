@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import { MessageSquare } from 'lucide-react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { 
-  Navbar, Nav, Container, Button, Row, 
-  Col, Card, Form 
-} from 'react-bootstrap';
+
 import WisprHeroSection from "./WisprHeroSection.js";
 import WisprFeatures from "./WisprFeature.js";
 import WisprCta from "./WisprCta.js";
