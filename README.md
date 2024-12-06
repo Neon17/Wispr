@@ -13,6 +13,13 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
 - **Modern UI**: Clean, responsive design with smooth animations
 - **Cross-Platform**: Available on web, with mobile apps coming soon
 
+## Installation
+
+Inside /backend and /frontend folder, run below command separately
+```cmd
+  npm install
+```
+
 ## 🚀 Quick Start
 
 ## Frontend
@@ -88,17 +95,34 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
     "password": "12345",
     "confirmPassword": "12345"
   }
-  #### Get All Users
+---
+
+#### Get All Users
 
 - **Path:** `/`
 - **Method:** GET
 
 ---
 
-#### Show All Group List
+#### Show All Groups
 
 - **Path:** `/showAllGroupList`
 - **Method:** GET
+- **Purpose:** To display all groups user has been joined on
+- **Result:** (Result are shown after expanding foreign key "members" in "groups" below, see Group Model)
+  ```json
+  "status": "success",
+    "data": {
+      "groups": [{}],
+      "latestMessages":[{}]
+    }
+  ```
+
+#### Fetch All Unknown Users
+
+- **Path:** `/fetchAllUnknownUsers`
+- **Method:** `GET`
+- **Purpose:** To get all new users whom logged in user hasn't joined chat or formed group with
 
 ---
 
@@ -106,6 +130,7 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
 
 - **Path:** `/addGroup`
 - **Method:** POST
+- **Purpose:** To add one user to form group in order to chat with him/her
 - **Body:**
   ```json
   {
@@ -133,6 +158,13 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
     "message": "Second message is not that interesting"
   }
     ```
+#### Profile Information
+
+- **Path:** `/profile`
+- **Method:** GET
+- **Purpose:** To get all profile info like username, firstName,...
+
+
     ## Database/Models
 
 ### User Model
@@ -144,7 +176,6 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
   - `lastName`
   - `email`
   - `password`
-  - `confirmPassword`
 
 ---
 
@@ -165,6 +196,7 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
   - `groupId` (ID from Group Model)
   - `message`
   - `dateTime`
+  - `senderId` (ID from User Model)
 
 ---
 
@@ -182,8 +214,9 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
 
 2. **Group Management:**
    - After login, hit **Show All Group List** API to fetch all user chat group lists.
-   - To start a new chat:
-     - Use **Get All Users** API to search for users (excluding the current user).
+   - Then hit **Fetch All Unknown Users** API to fetch all new users
+   - To start a new chat for new user(s):
+     - Click "Start Chat" button on frontend to hit **Add/Create Group** API that auto adds logged in user Id and that User Id to form group
      - A new **Group** model is created when initiating a chat.
 
 3. **Messaging:**
