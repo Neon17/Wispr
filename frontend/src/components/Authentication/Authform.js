@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
 
 const AuthForm = () => {
   let location = useLocation();
@@ -15,6 +16,7 @@ const AuthForm = () => {
     confirmPassword: ''
   });
   const [errors, setErrors] = useState({});
+  const [msg, setMsg] = useState('Please login to continue.');
   const [responseError, setResponseError] = useState(null);
   const navigate = useNavigate();
 
@@ -72,8 +74,9 @@ const AuthForm = () => {
             if (res.data.status=='success'){
               localStorage.removeItem('token');
               localStorage.setItem('token',res.data.token);
-              if (location.pathname=='/auth')
-                navigate("/",{ replace: true });
+              if (localStorage.getItem('token')) {
+                window.location.href = '/home';
+                setMsg("1You have successfully logged in!Welcome back.");}
               else 
                 window.location.reload();
             }
@@ -99,8 +102,11 @@ const AuthForm = () => {
           if (res.data.status=='success'){
             localStorage.removeItem('token');
             localStorage.setItem('token',res.data.token);
-            if (location.pathname=='/auth')
-              navigate("/",{ replace: true });
+            if (location.pathname=='/auth'){
+              setIsLogin(!isLogin);
+              setMsg("You have successfully signed up!Please login to continue.");
+              navigate("/auth",{ replace: true });
+            }
             else 
               window.location.reload();
           }
@@ -108,8 +114,6 @@ const AuthForm = () => {
         }).catch((err)=>{
           setResponseError("Something went wrong. Please try again later!");
           setErrors({error: err.message});
-
-          console.log(err);
         });
       }
 
@@ -127,6 +131,11 @@ const AuthForm = () => {
   return (
     <div className="container-fluid d-flex align-items-center justify-content-center pt-3" style={{marginTop: '76px'}}>
       <div className="card shadow-lg" style={{ maxWidth: '500px', width: '100%', borderRadius: '20px' }}>
+      {msg && (
+      <Alert variant="primary" className='m-1' onClose={() => setMsg('')} dismissible>
+        {msg}
+      </Alert>
+    )}
         <div className="card-body p-5">
           <div className="text-center mb-4">
             <i className="fas fa-comments text-primary mb-3" style={{ fontSize: '2.5rem' }}></i>
