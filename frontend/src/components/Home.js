@@ -32,7 +32,7 @@ function App() {
 
   const getInitials = (name) => {
     const nameArr = name.split(' ');
-    return nameArr[0][0]
+    return nameArr[0][0].toUpperCase();
   };
 
   useEffect(() => {
