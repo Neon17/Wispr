@@ -25,7 +25,7 @@ const getJoinedGroups = asyncErrorHandler(async(req,res,next)=>{
 const getLatestMessages = (async(groups)=>{
     let messages = [];
     let message;
-    for (i=0;i<groups.length;i++){
+    for (let i=0;i<groups.length;i++){
         message = await Message.find({groupId: groups[i]._id}).exec();
         messages.push(message[message.length-1]);
     }
