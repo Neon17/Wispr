@@ -96,7 +96,7 @@ const ChatList = (props) => {
   Friends
 </h6>
 
-{users.length === 0 ? (
+{users && users.length === 0 ? (
   <div className="text-center m-5">No Users Available</div>
 ) : (
   <div
@@ -107,7 +107,7 @@ const ChatList = (props) => {
       WebkitOverflowScrolling: 'touch', // Enable smooth scrolling on iOS
     }}
   >
-    {users.map((user) => (
+    {Array.isArray(users) && users.map((user) => (
       <div
         key={user._id}
         className={` mb-3 rounded-4 ${props.userId === user._id ? 'bg-light' : 'hover-bg-light'}`}
@@ -184,13 +184,13 @@ const ChatList = (props) => {
     <h6 className="text-muted text-center pt-3 pb-2 text-uppercase" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
      Chat
     </h6>
-    {groups.length === 0 ?
+    {groups && groups.length === 0 ?
   (<div className='text-center m-5'>No Groups Available</div>):
 
 
 
     (<div className="mb-4">
-      {groups.map((group) => (
+      {Array.isArray(groups) &&groups.map((group) => (
         <div
           key={group._id}
           className={`mx-4 mb-3 rounded-4 ${props.groupId === group._id ? 'bg-light' : 'hover-bg-light'}`}
