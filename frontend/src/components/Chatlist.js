@@ -88,10 +88,89 @@ const ChatList = (props) => {
           }
         `}
       </style>
-      
+{/* Users Section */}
+<h6 className="text-muted text-center pt-3 pb-2 text-uppercase border-top" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
+  Friends
+</h6>
+
+{users.length === 0 ? (
+  <div className="text-center m-5">No Users Available</div>
+) : (
+  <div
+    className="mb-0 overflow-x-auto d-flex flex-nowrap"
+    style={{
+      padding: '0 1px', // Reduced padding
+      scrollbarWidth: 'none', // Hide scrollbar for modern browsers
+      WebkitOverflowScrolling: 'touch', // Enable smooth scrolling on iOS
+    }}
+  >
+    {users.map((user) => (
+      <div
+        key={user._id}
+        className={` mb-3 rounded-4 ${props.userId === user._id ? 'bg-light' : 'hover-bg-light'}`}
+        onClick={() => props.userClick(user._id)}
+        role="button"
+        style={{
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
+          minWidth: '120px',
+          maxWidth: '150px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          padding: '0px', // More consistent padding
+        }}
+      >
+        {/* Online Status */}
+        <div
+          className="position-relative"
+          style={{
+            width: '60px',
+            height: '60px',
+            marginBottom: '8px',
+          }}
+        >
+          <div
+            className="position-absolute bg-success rounded-circle border border-2 border-white"
+            style={{
+              width: '15px',
+              height: '15px',
+              top: '0',
+              left: '45px',
+              zIndex: 1,
+            }}
+          />
+          {/* Profile Picture */}
+          <div
+            className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm"
+            style={{
+              width: '60px',
+              height: '60px',
+              fontSize: '22px',
+              fontWeight: 'bold',
+              marginBottom: '6px', // Reduced margin for better compactness
+            }}
+          >
+            {props.getInitials(`${user.firstName} ${user.lastName}`)}
+          </div>
+        </div>
+
+        {/* User Info */}
+        <div className="text-center flex-grow-1" style={{ padding: '0 8px' }}>
+          <div className="d-flex justify-content-center align-items-center flex-column">
+            <span className="fw-bold" style={{ fontSize: '14px', color: '#333' }}>
+              {user.firstName} {user.middleName} {user.lastName}
+            </span>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
       {/* Groups Section */}
     <h6 className="text-muted text-center pt-3 pb-2 text-uppercase" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
-      Groups and Friends
+     Chat
     </h6>
     {groups.length === 0 ?
   (<div className='text-center m-5'>No Groups Available</div>):
@@ -149,61 +228,7 @@ const ChatList = (props) => {
 }
 
  
-    {/* Users Section */}
-    <h6 className="text-muted text-center pt-3 pb-2 text-uppercase border-top" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
-      New People
-    </h6>
-    { users.length === 0 ? (<div className='text-center m-5'>No Users Available</div>):(
-    <div className="mb-3">
-      {users.map((user) => (
-        <div
-          key={user._id}
-          className={`mx-4 mb-3  rounded-4 ${props.userId === user._id ? 'bg-light' : 'hover-bg-light'}`}
-          onClick={() => props.userClick(user._id)}
-          role="button"
-          style={{
-            cursor: 'pointer',
-            transition: 'all 0.2s ease',
-            border: '1px solid rgba(0,0,0,0.1)',
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <div className="position-relative d-flex align-items-center p-3">
-            {/* Online Status */}
-            <div
-              className="position-absolute bg-success rounded-circle border border-2 border-white"
-              style={{ width: '15px', height: '15px', top: '20px', left: '60px', zIndex: 1 }}
-            />
 
-            {/* Profile Picture */}
-            <div
-              className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm "
-              style={{ width: '60px', height: '60px', fontSize: '25px',fontWeight: 'bold' }}
-            >
-              {props.getInitials(`${user.firstName} ${user.lastName}`)}
-            </div>
-
-            <div className="ms-3 flex-grow-1">
-              <div className="d-flex justify-content-between align-items-center">
-                <span className="fw-bold" style={{ fontSize: '18px', color: '#333', letterSpacing: '0.5px' }}>
-                  {user.firstName} {user.middleName} {user.lastName}
-                </span>
-                <small className="text-muted" style={{ fontSize: '12px', opacity: 0.7 }}>
-                  07:08 AM
-                </small>
-              </div>
-              <div className="text-muted text-truncate" style={{ fontSize: '13px', color: '#555' }}>
-                <small className="d-block" style={{ fontStyle: 'italic', color: '#888' }}>
-                  Click to start chat
-                </small>
-              </div>
-</div>
-
-          </div>
-        </div>
-      ))}
-    </div>
-    )}
   </div>
 </div>
 
