@@ -39,6 +39,9 @@ function App() {
     socket.on('message-received', (message) => {
       setText(message.text);
     })
+    if (!localStorage.getItem('token')){
+      window.location.reload();
+    }
   })
 
   return (

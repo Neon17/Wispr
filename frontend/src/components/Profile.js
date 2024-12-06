@@ -46,6 +46,11 @@ export default function Profile() {
         })
     },[])
 
+    useEffect(()=>{
+      if (!localStorage.getItem('token'))
+        window.location.reload();
+    })
+
     return (
         <div className="container pt-3" style={{marginTop: '76px'}}>
         <div className="card p-4">
