@@ -47,7 +47,7 @@ const WhisprNav = () => {
                 <Nav.Link onClick={logout} href="/">Logout</Nav.Link>:
                 <Nav.Link href="/auth">Login</Nav.Link>
               }
-              <Button variant="primary" href='/home' className="ms-3">Get Started</Button>
+              <Button variant="primary" href='/' className="ms-3">Get Started</Button>
             </Nav>
           </Navbar.Collapse>
         </Container> 

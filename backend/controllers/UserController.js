@@ -22,6 +22,16 @@ const getJoinedGroups = asyncErrorHandler(async(req,res,next)=>{
     return groups;
 })
 
+const getLatestMessages = (async(groups)=>{
+    let messages = [];
+    let message;
+    for (i=0;i<groups.length;i++){
+        message = await Message.find({groupId: groups[i]._id}).exec();
+        messages.push(message[message.length-1]);
+    }
+    return messages;
+})
+
 const nameJoinedGroups = (groups,id)=>{
     let status = 0, groupCount = 0;
     let groupName = "";
@@ -77,11 +87,16 @@ exports.profile = asyncErrorHandler(async(req,res,next)=>{
 })
 
 exports.showAllGroupList = asyncErrorHandler(async(req,res,next)=>{
+    //It shows group list and latest message of each group
     let groups = await getJoinedGroups(req,res,next);
     groups = nameJoinedGroups(groups,req.user._id);
+    let latestMessages = await getLatestMessages(groups);
     res.status(200).json({
         status: 'success',
-        data: groups
+        data: {
+            groups: groups,
+            latestMessages: latestMessages
+        }
     })
 })
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ChatList = (props) => {
   const [users, setUsers] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState(null);
 
   const chatRoomJoin = (id) => {
     props.groupClick(id);
@@ -19,19 +19,19 @@ const ChatList = (props) => {
   const fetchGroups = async () => {
     try {
       const token = localStorage.getItem('token'); // Extract token from localStorage
-      const response = await axios.get('http://localhost:5000/api/v1/users/showAllGroupList', {
+      await axios.get('http://localhost:5000/api/v1/users/showAllGroupList', {
         headers: {
           Authorization: `Bearer ${token}`, // Set Authorization header
         },
-      });
-
-      if (response.data.status === 'success') {
-        setGroups(response.data.data); // Save user data to state
-      } else {
-        console.error('Failed to fetch users:', response.data.message);
-      }
+      }).then((response)=>{
+        if (response.data.status === 'success') {
+          setGroups(response.data.data);
+        } else {
+          console.error('Failed to fetch users:', response.data.message);
+        }
+      }).catch((err)=>console.error(err.message));
     } catch (error) {
-      console.error('Error fetching users:', error);
+        console.error('Error fetching users:', error);
     }
   }
 
@@ -74,7 +74,7 @@ const ChatList = (props) => {
 
 
       <h5 className='text-center m-3'>Groups and Friends</h5>
-      {groups.map((group) => (
+      {(groups!=null) && groups.groups.map((group,index) => (
         <div
           key={group._id}
           className="personContainer border-top border-bottom p-3"
@@ -100,7 +100,8 @@ const ChatList = (props) => {
               </div>
               {/* Placeholder for last message */}
               <div className="personMessage text-muted" style={{ fontSize: '14px' }}>
-                Last message placeholder
+                {(groups.latestMessages[index]) && groups.latestMessages[index].message}
+                {(!groups.latestMessages[index]) && <>Write your first message</>}
               </div>
             </div>
           </div>
@@ -108,10 +109,10 @@ const ChatList = (props) => {
           {/* Time */}
           <div
             className="personTime form-text text-muted text-end"
-            style={{ fontSize: '12px' }}
+            style={{ fontSize: '12px' }}  
           >
             {/* Placeholder for message time */}
-            07:08 AM
+            {(groups.latestMessages[index]) && groups.latestMessages[index].dateTime.substr(11,5)}
           </div>
         </div>
       ))}
@@ -143,7 +144,7 @@ const ChatList = (props) => {
               </div>
               {/* Placeholder for last message */}
               <div className="personMessage text-muted" style={{ fontSize: '14px' }}>
-                Last message placeholder
+                Start a new conversation
               </div>
             </div>
           </div>
