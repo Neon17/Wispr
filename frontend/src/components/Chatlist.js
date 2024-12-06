@@ -4,7 +4,8 @@ import { Form, InputGroup, Button } from 'react-bootstrap';
 
 const ChatList = (props) => {
   const [users, setUsers] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState(null);
+  const [status, setStatus] = useState(null);
 
   const chatRoomJoin = (id) => {
     props.groupClick(id);
@@ -16,6 +17,17 @@ const ChatList = (props) => {
     fetchGroups();
     fetchUsers();
   },[props.groupId, props.userId]);
+
+  useEffect(()=>{
+    props.socket.on('new-message-received',()=>{
+      setStatus(true);
+    });
+  })
+
+  useEffect(()=>{
+    fetchUsers();
+    fetchGroups();
+  },[status])
 
   const fetchGroups = async () => {
     try {

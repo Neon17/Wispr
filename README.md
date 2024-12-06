@@ -222,3 +222,15 @@ Inside /backend and /frontend folder, run below command separately
 3. **Messaging:**
    - Fetch all messages in a group using **Get All Messages** API.
    - Send messages by hitting **Send Message** API with the `groupId` and `message`.
+
+
+## Upcoming Features
+
+1. Add Members in Group
+2. Change Group Name
+3. Message Status: Sending, Sent, Delivered, Seen
+4. Message Status in Group: Seen by Shyam, Ram, John, Sent, Sending, Delivered(if anyone in group online)
+5. Profile Picture: Updating profile picture
+6. Esewa or Some Payment Integration: User can fill credentials and pay another user if they want
+
+## Hoping to Become the First Nepali Messenger with Payment Integration
