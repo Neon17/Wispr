@@ -9,7 +9,7 @@ const ENDPOINTS = ["http://localhost:5000",
 
 
 function App() {
-  var socket = io(ENDPOINTS[1]);
+  var socket = io(ENDPOINTS[0]);
   const [text, setText] = useState("");
   let [status, setStatus] = useState(false);
   const [groupId, setGroupId] = useState(null); //which group messages user is reading, that group's Id is here
@@ -17,7 +17,6 @@ function App() {
 
   const groupClick = (id)=>{
     setUserId(null);
-    console.log(`Clicked on group ${id}`);
     setGroupId(id);
   }
 
@@ -27,72 +26,14 @@ function App() {
   }
 
   useEffect(() => {
-    updateMessage();
     socket.emit('setup', 'hello');
-    socket.on('message-received', updateMessage);
     setStatus(false);
   }, [status])
-
-  const updateMessage = () => {
-    fetch(`${ENDPOINTS[1]}/message.txt`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("HTTP error " + response.status);
-        }
-        return response.json();
-      })
-      .then(json => {
-        setText(json.data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      })
-  }
 
   const getInitials = (name) => {
     const nameArr = name.split(' ');
     return nameArr[0][0]
   };
-
-  const chatRoomJoin = () => {
-    let date = Date.now();
-    localStorage.setItem('id', 12345);
-    socket.emit('join chat', 12345);
-    console.log('Chat Room Joined');
-    setStatus(true);
-  }
-
-  const triggerSocket = () => {
-    updateMessage();
-    socket.emit("button-clicked");
-  }
-
-  const sendMessage = () => {
-    setStatus(true);
-    let message = {
-      id: 12345,
-      text: text
-    }
-    socket.emit("new-message", message);
-  }
-
-
-  // socket.on('update-message',()=>{
-  //   console.log('updating message');
-  //   fetch('http://localhost:5000/message.txt')
-  //   .then((response)=>{
-  //     if (!response.ok) {
-  //       throw new Error("HTTP error " + response.status);
-  //     }
-  //     return response.json();
-  //   })
-  //   .then(json => {
-  //     setText(json.data);
-  //   })
-  //   .catch((err)=>{
-  //     console.log(err.message);
-  //   })  
-  // })
 
   useEffect(() => {
     socket.on('message-received', (message) => {
@@ -109,13 +50,13 @@ function App() {
           groupClick={groupClick} userClick={userClick}
           groupId={groupId} setGroupId={setGroupId} 
           userId={userId} setUserId={setUserId}
-          getInitials={getInitials} 
+          getInitials={getInitials} socket={socket}
         />
 
         <ChatMessages
           groupId={groupId} setGroupId={setGroupId} 
           userId={userId} setUserId={setUserId}
-          getInitials={getInitials}
+          getInitials={getInitials} socket={socket}
         />
 
 

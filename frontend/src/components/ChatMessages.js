@@ -1,7 +1,6 @@
 import { useEffect,useState } from "react";
 import axios from "axios";
 
-
 const ChatMessages = (props) => {
   const [axiosConfig] = useState({
     headers: {
@@ -10,35 +9,47 @@ const ChatMessages = (props) => {
   });
   const [messages,setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
+  const [status, setStatus] = useState(false); //status when messages need to be updated
 
   useEffect(()=>{
     setMessages(null);
     if (props.groupId!=null)
-      fetchMessages(props.groupId);
-  },[props.groupId, props.userId])
+      fetchMessages();
+    setStatus(false);
+  },[props.groupId, props.userId,status])
 
-  const fetchMessages = (id)=>{
+  useEffect(()=>{
+    props.socket.on('send-message-status',(res)=>{
+      // console.log(res);
+      if (res.status=='success') console.log('successfully sent message');
+      else console.log('failed to send message');
+    })
+    props.socket.on('new-message-received',()=>{
+      setStatus(true);
+    });
+  })
+
+  const fetchMessages = ()=>{
+    let id = props.groupId;
     axios.post("http://localhost:5000/api/v1/users/getAllMessages",{
       "groupId": id
     }, axiosConfig).then((res)=>{
-      console.log(res.data);
+      // console.log(res.data);
       setMessages(res.data.data);
     }).catch((err)=>{
-      console.log(err.message);
+      console.error(err.message);
     })
   }
 
   const sendGroupMessage = (id)=>{
     let temp = messageText;
     setMessageText("");
-    axios.post("http://localhost:5000/api/v1/users/sendMessage",{
+    let message = {
+      "token": localStorage.getItem('token'),
       "groupId": id,
       "message": temp
-    }, axiosConfig).then((res)=>{
-      console.log(res.data);
-    }).catch((err)=>{
-      console.log(err.message);
-    })
+    }
+    props.socket.emit('group-message-send',message);
   }
 
   const startChat = (id)=>{
@@ -46,11 +57,11 @@ const ChatMessages = (props) => {
     axios.post("http://localhost:5000/api/v1/users/addGroup",{
       "id": id,
     }, axiosConfig).then((res)=>{
-      console.log(res.data);
+      // console.log(res.data);
       props.setUserId(null);
       props.setGroupId(res.data.data._id);
     }).catch((err)=>{
-      console.log(err.message);
+      console.error(err.message);
     })
   }
 
@@ -130,7 +141,7 @@ const ChatMessages = (props) => {
 
       </div>
 
-
+      {(props.groupId) &&
       <div className='typeContainer p-2 w-100 d-flex'>
         <div className="mb-3 flex-grow-1">
           <input
@@ -150,7 +161,7 @@ const ChatMessages = (props) => {
             <i className="fa-solid fa-arrow-right"></i>
           </button>
         </div>
-      </div>
+      </div>}
 
     </div>
   );

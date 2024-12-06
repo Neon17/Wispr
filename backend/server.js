@@ -5,6 +5,7 @@ const fs = require('fs');
 const app = require('./app');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const axios = require('axios');
 
 dotenv.config({path: './config.env'});
 
@@ -40,6 +41,30 @@ io.on("connection", (socket) => {
     fs.writeFileSync('message.txt',message.text);
     socket.in(message.id).emit('message-received',message);
     console.log('message-received');
+  })
+  socket.on('group-message-send',(message)=>{
+    let returnData = {
+      status: ''
+    };
+    const axiosConfig = {
+      headers: {
+        "Authorization": `Bearer ${message.token}`
+      }
+    };
+    axios.post("http://localhost:5000/api/v1/users/sendMessage",{
+      "groupId": message.groupId,
+      "message": message.message
+    }, axiosConfig).then((res)=>{
+      returnData.status = 'success';
+      returnData.data = res.data;
+      socket.in(message.groupId).emit('send-message-status',returnData);
+      socket.in(message.groupId).emit('new-message-received');
+    }).catch((err)=>{
+      console.log(err);
+      returnData.status = 'error';
+      returnData.message = err.message;
+      socket.in(message.groupId).emit('send-message-status',returnData);
+    })
   })
 });
 

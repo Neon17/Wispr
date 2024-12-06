@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// karne ho yo onclickma userid dechu tyo bata gara yesko lagi
-const clickGroup = () => {
-  console.log('Chat Group Clicked!');
-}
+
 const ChatList = (props) => {
   const [users, setUsers] = useState([]);
   const [groups, setGroups] = useState([]);
+
+  const chatRoomJoin = (id) => {
+    props.groupClick(id);
+    props.socket.emit('join chat', id);
+    console.log('Chat Room Joined');
+  }
 
   useEffect(()=>{
     fetchGroups();
@@ -76,7 +79,7 @@ const ChatList = (props) => {
           key={group._id}
           className="personContainer border-top border-bottom p-3"
           style={(props.groupId == group._id) ? { backgroundColor: "#d1d9ef" } : {}}
-          onClick={function () { props.groupClick(group._id) }} // Handle click event
+          onClick={function () { chatRoomJoin(group._id) }} // Handle click event
           role="button"
         >
           {/* Profile Name */}
