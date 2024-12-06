@@ -71,8 +71,9 @@ const ChatMessages = (props) => {
   }
 
   return (
+    <>
     <div className='border m-5 d-flex flex-column justify-content-between' style={{ width: '65%' }}>
-
+    
       {(!props.groupId) && (!props.userId) && <div className='text-center m-5'>Click on the Group or User List to see messages</div>}
       <div className='container-fluid pt-2'>
         {messages && messages.map(message => (
@@ -80,6 +81,7 @@ const ChatMessages = (props) => {
             key={message._id}
             className={`d-flex align-items-center ${message.isUser ? 'flex-row-reverse' : ''}`}
           >
+
             <div className="position-relative me-3 ms-3">
               <div
                 className="avatar rounded-circle bg-primary text-white d-flex justify-content-center align-items-center"
@@ -147,20 +149,20 @@ const ChatMessages = (props) => {
       <div className=' p-2 w-100 d-flex'>
         <div className="mb-3 flex-grow-1">
         <InputGroup
-  type="text"
-  name=""
-  id=""
-  style={{
-    backgroundColor: '#FFF',
-    borderRadius: '30px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-    padding: '5px 12px',
-  }}
-  value={messageText}
-  onChange={changeMessageText}
-  placeholder="Type a message"
-  aria-describedby="helpId"
->
+      type="text"
+      name=""
+      id=""
+      style={{
+        backgroundColor: '#FFF',
+        borderRadius: '30px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        padding: '5px 12px',
+      }}
+      value={messageText}
+      onChange={changeMessageText}
+      placeholder="Type a message"
+      aria-describedby="helpId"
+    >
   <Form.Control
     placeholder="Type a message"
     className="border-0 p-3"
@@ -190,28 +192,12 @@ const ChatMessages = (props) => {
     <i className="fa-solid fa-arrow-right" style={{ fontSize: '18px', color: 'white' }}></i>
   </Button>
 </InputGroup>
-
-
-          {/* <input
-            type="text"
-            name=""
-            id=""
-            className="border form-control rounded-0 rounded-start"
-            style={{ backgroundColor: '#FFF' }}
-            value={messageText}
-            onChange={changeMessageText}
-            placeholder=""
-            aria-describedby="helpId"
-          /> */}
         </div>
-        {/* <div className='buttonContainer'>
-          <button type="button" onClick={() => sendGroupMessage(props.groupId)} className="btn btn-primary rounded-0 rounded-end" data-bs-toggle="button" aria-pressed="false" autoComplete="off">
-            <i className="fa-solid fa-arrow-right"></i>
-          </button>
-        </div> */}
+ 
       </div>}
 
     </div>
+    </>
   );
 };
 
