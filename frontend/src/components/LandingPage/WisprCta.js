@@ -12,7 +12,7 @@ const WisprCta = () => {
           <p className="lead mb-4">
             Join thousands of users already connecting through Wispr.
           </p>
-          <a name="" id="" class="btn btn-light btn-lg" href={`${localStorage.getItem('token')?'/home':'/auth'}`} role="button" >Get Started Now</a>
+          <a name="" id="" className="btn btn-light btn-lg" href={`${localStorage.getItem('token')?'/home':'/auth'}`} role="button" >Get Started Now</a>
         </Container>
       </section>
     );

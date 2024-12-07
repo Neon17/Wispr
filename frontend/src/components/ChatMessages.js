@@ -44,6 +44,7 @@ const ChatMessages = (props) => {
 
   const sendGroupMessage = (id)=>{
     let temp = messageText;
+    console.log("Group Message Clicked");
     setMessageText("");
     let message = {
       "token": localStorage.getItem('token'),
