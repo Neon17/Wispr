@@ -86,8 +86,8 @@ const ChatList = (props) => {
               placeholder="Search for a User"
               className="border-end-0 text-center rounded-pill shadow-none"
             />
-            <Button variant="outline-secondary" className="border-start-0 bg-transparent rounded-pill">
-              <i className="fa-solid fa-magnifying-glass text-muted"></i>
+            <Button variant="primary" className="ms-1 border-start-0  rounded-pill">
+              <i className="fa-solid fa-magnifying-glass text-light"></i>
             </Button>
           </InputGroup>
         </div>
