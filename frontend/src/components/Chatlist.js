@@ -77,7 +77,7 @@ const ChatList = (props) => {
   // Render user list
   return (
 
-    <div className="border bg-white rounded-3 shadow-sm ms-3" style={{ width: '35%', height: '90vh', maxWidth: '600px' }}>
+    <div className="p-2 d-flex flex-column  mt-5 border bg-white rounded-3 shadow-sm ms-3" style={{ width: '30%', height:"81vh", maxWidth: '500px' }}>
       {/* Search Box */}
       <div className="position-sticky top-0 bg-white rounded-top-3" style={{ zIndex: 1020 }}>
         <div className="p-3">
@@ -186,7 +186,7 @@ const ChatList = (props) => {
           ))}
         </div>
       )}
-      <div className="px-1" style={{ height: 'calc(65vh - 2px)', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div className="px-1" style={{ height: '55vh', overflowY: 'auto', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <style>
           {`
           .px-1::-webkit-scrollbar {
@@ -197,7 +197,7 @@ const ChatList = (props) => {
 
 
      {/* Chat Groups Section */}
-     <h6 className="text-muted text-center pt-3 pb-2 text-uppercase" style={{ fontSize: '14px', letterSpacing: '1px', fontWeight: '500' }}>
+     <h6 className="text-muted m-1 text-center pt-3 pb-2 text-uppercase" style={{ fontSize: '14px', letterSpacing: '1px', fontWeight: '500' }}>
       Chat Groups
     </h6>
     {(groups != null) && groups.groups && groups.groups.length === 0 ? (
