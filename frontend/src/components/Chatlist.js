@@ -132,7 +132,7 @@ const ChatList = (props) => {
               style={{
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                minWidth: '120px',
+                minWidth: '90px',
                 maxWidth: '150px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -159,9 +159,30 @@ const ChatList = (props) => {
                     zIndex: 1,
                   }}
                 />
+                <style>
+                  {`
+                  .avatar-circle {
+ 
+   
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+  }
+
+  .avatar-circle:hover {
+    transform: scale(0.1);
+  }
+                  `}
+                </style>
                 {/* Profile Picture */}
                 <div
-                  className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm"
+                  className="avatar-circle rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm"
                   style={{
                     width: '60px',
                     height: '60px',
@@ -218,7 +239,7 @@ const ChatList = (props) => {
           >
             <div className="d-flex align-items-center">
               <div
-                className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm me-3"
+                className="avatar-circle rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm me-3"
                 style={{
                   width: '50px',
                   height: '50px',
