@@ -196,71 +196,55 @@ const ChatList = (props) => {
         </style>
 
 
-        {/* Groups Section */}
-        <h6 className="text-muted text-center pt-3 pb-2 text-uppercase" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
-          Chat
-        </h6>
-        {(groups!=null) && groups.groups && groups.groups.length === 0 ?
-          (<div className='text-center m-5'>No Groups Available</div>) :
-
-
-
-          (<div className="mb-4">
-            {(groups!=null) && groups.groups && groups.groups.map((group, index) => (
+     {/* Chat Groups Section */}
+     <h6 className="text-muted text-center pt-3 pb-2 text-uppercase" style={{ fontSize: '14px', letterSpacing: '1px', fontWeight: '500' }}>
+      Chat Groups
+    </h6>
+    {(groups != null) && groups.groups && groups.groups.length === 0 ? (
+      <div className='text-center m-5'>No Groups Available</div>
+    ) : (
+      <div>
+        {(groups != null) && groups.groups && groups.groups.map((group, index) => (
+          <div
+            key={group._id}
+            className={`rounded-4 mb-3 p-3 d-flex align-items-center justify-content-between hover-shadow bg-white border-0`}
+            onClick={() => chatRoomJoin(group._id)}
+            role="button"
+            style={{
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <div className="d-flex align-items-center">
               <div
-                key={group._id}
-                className={`mx-4 mb-3 rounded-4 ${props.groupId === group._id ? 'bg-light' : 'hover-bg-light'}`}
-                onClick={() => chatRoomJoin(group._id)}
-                role="button"
+                className="rounded-circle bg-primary text-white d-flex justify-content-center align-items-center shadow-sm me-3"
                 style={{
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
-                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                  width: '50px',
+                  height: '50px',
+                  fontSize: '22px',
+                  fontWeight: 'bold',
                 }}
               >
-                <div className="position-relative d-flex align-items-center p-3">
-                  {/* Online Status */}
-                  <div
-                    className="position-absolute bg-success rounded-circle border border-2 border-white"
-                    style={{ width: '15px', height: '15px', top: '20px', left: '60px', zIndex: 1 }}
-                  />
-
-                  {/* Profile Picture */}
-                  <div
-                    className="rounded-circle bg-primary  text-white d-flex justify-content-center align-items-center shadow-sm"
-                    style={{ width: '60px', height: '60px', fontSize: '22px', fontWeight: 'bold' }}
-                  >
-                    {props.getInitials(`${group.name}`)}
-                  </div>
-
-                  <div className="ms-3 flex-grow-1">
-                    <div className="d-flex justify-content-between align-items-center">
-                      <span className="fw-bold" style={{ fontSize: '18px', color: '#333', letterSpacing: '0.5px' }}>
-                        {group.name}
-                      </span>
-                      <small className="text-muted" style={{ fontSize: '12px', opacity: 0.7 }}>
-                        {groups && groups.latestMessages[index] && groups.latestMessages[index].dateTime.substr(11,5)}
-                      </small>
-                    </div>
-                    <div className="text-muted text-truncate" style={{ fontSize: '13px', color: '#555' }}>
-                      <small className="d-block" style={{ fontStyle: 'italic', color: '#888' }}>
-                        {groups && groups.latestMessages[index] && groups.latestMessages[index].message}
-                        {groups && !groups.latestMessages[index] && <>Click to start a new chat</>}
-                      </small>
-                    </div>
-                  </div>
+                {props.getInitials(group.name)}
+              </div>
+              <div>
+                <span className="fw-bold text-dark">{group.name}</span>
+                <div className="text-muted text-truncate" style={{ fontSize: '12px', color: '#555' }}>
+                  {groups && groups.latestMessages[index] && groups.latestMessages[index].message}
+                  {groups && !groups.latestMessages[index] && <>Click to start a new chat</>}
                 </div>
               </div>
-            ))}
-          </div>)
-        }
-
-
-
+            </div>
+            <div>
+              <i className="fas fa-chevron-right text-muted" style={{ fontSize: '18px' }}></i>
+            </div>
+          </div>
+        ))}
       </div>
-    </div>
-
+    )}
+  </div>
+</div>
   );
 };
 
