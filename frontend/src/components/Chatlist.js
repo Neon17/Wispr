@@ -93,12 +93,27 @@ const ChatList = (props) => {
         </div>
       </div>
       {/* Users Section */}
-      <h6 className="text-muted text-center pt-3 pb-2 text-uppercase border-top" style={{ fontSize: '13px', letterSpacing: '0.5px' }}>
-        Users you haven't chatted with
+   <div className="d-flex align-items-center justify-content-center pt-3 pb-2 border-top">
+    <div className="pr-2">
+      <i className="fas fa-users text-primary" style={{ fontSize: '20px' }}></i>
+    </div>
+    <div>
+      <h6
+        className="text-muted text-center text-uppercase"
+        style={{
+          fontSize: '13px',
+          letterSpacing: '0.5px',
+          fontWeight: 'bold',
+        }}
+      >
+        Users You Haven't Chatted With
       </h6>
-
+    </div>
+  </div>
+      
       {users && users.length === 0 ? (
         <div className="text-center m-5">No Users Available</div>
+        
       ) : (
         <div
           className="mb-0 overflow-x-auto d-flex flex-nowrap"
