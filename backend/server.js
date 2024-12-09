@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
       returnData.status = 'success';
       returnData.data = res.data;
       socket.in(message.groupId).emit('send-message-status',returnData);
-      socket.in(message.groupId).emit('new-message-received');
+      io.emit('new-message-received',message);
     }).catch((err)=>{
       console.log(err);
       returnData.status = 'error';

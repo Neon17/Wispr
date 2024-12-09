@@ -11,6 +11,7 @@ const ChatMessages = (props) => {
   const [messages,setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
   const [status, setStatus] = useState(false); //status when messages need to be updated
+  const [scrollStatus, setScrollStatus] = useState(0); //scroll to bottom at first
 
   useEffect(()=>{
     setMessages(null);
@@ -25,9 +26,24 @@ const ChatMessages = (props) => {
       if (res.status=='success') console.log('successfully sent message');
       else console.log('failed to send message');
     })
-    props.socket.on('new-message-received',()=>{
-      setStatus(true);
+    props.socket.on('new-message-received',(message)=>{
+      if ((message!=undefined)||(message!=null)){
+        if (message.groupId==props.groupId){
+          console.log("In same room from ChatMessages");
+          if (!status){
+            setStatus(true);
+            setScrollStatus(0);
+          }
+        }
+      }
     });
+    if (scrollStatus<=15){
+      if ((props.groupId)){
+        let msg = document.getElementById("messages-box-scroll-1234");
+        msg.scrollTop = msg.scrollHeight;
+        setScrollStatus(scrollStatus+1);
+      }
+    }
   })
 
   const fetchMessages = ()=>{
@@ -108,7 +124,7 @@ const ChatMessages = (props) => {
   </div>
 )}
 
-<div className='messages-container px-lg-4 px-2 py-3'>
+<div className='messages-container px-lg-4 px-2 py-3' id="messages-box-scroll-1234">
   {messages && messages.map(message => (
     <div
       key={message._id}

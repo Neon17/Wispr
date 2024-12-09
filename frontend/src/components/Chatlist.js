@@ -19,14 +19,18 @@ const ChatList = (props) => {
   }, [props.groupId, props.userId]);
 
   useEffect(() => {
-    props.socket.on('new-message-received', () => {
-      setStatus(true);
+    props.socket.on('new-message-received', (message) => {
+      if ((message!=undefined)||(message!=null)){
+        if (!status)
+          setStatus(true);
+      }
     });
   })
 
   useEffect(() => {
     fetchUsers();
     fetchGroups();
+    setStatus(false);
   }, [status])
 
   const fetchGroups = async () => {
