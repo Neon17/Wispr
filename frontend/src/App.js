@@ -5,10 +5,12 @@ import Authform from './components/Authentication/Authform';
 import Profile from './components/Profile';
 import WisprLanding from './components/LandingPage/WisprLanding';
 import WisprNav from './components/LandingPage/WisprNav';
+import PageLoader from './components/Loader/PageLoader';
 
 function App(){
   return (
     <>
+      <PageLoader>
       <Router future={{v7_startTransition: 'true', v7_relativeSplatPath: 'true'}}>
         <WisprNav/>
         <Routes>
@@ -19,6 +21,7 @@ function App(){
           <Route path='*' element={<div className='text-center p-5' style={{marginTop: '76px'}}>Page Not Found</div>} />
         </Routes>
       </Router>
+      </PageLoader>
     </>
   )
 }
