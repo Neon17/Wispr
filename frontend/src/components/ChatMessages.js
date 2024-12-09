@@ -1,6 +1,7 @@
 import { useEffect,useState } from "react";
 import axios from "axios";
 import { Form, InputGroup, Button,Container, Row, Col } from 'react-bootstrap';
+import PageLoader from './../components/Loader/PageLoader';
 
 const ChatMessages = (props) => {
   const [axiosConfig] = useState({
@@ -12,8 +13,10 @@ const ChatMessages = (props) => {
   const [messageText, setMessageText] = useState("");
   const [status, setStatus] = useState(false); //status when messages need to be updated
   const [scrollStatus, setScrollStatus] = useState(0); //scroll to bottom at first
+  const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
+    setLoading(true);
     setMessages(null);
     if (props.groupId!=null)
       fetchMessages();
@@ -53,6 +56,7 @@ const ChatMessages = (props) => {
     }, axiosConfig).then((res)=>{
       // console.log(res.data);
       setMessages(res.data.data);
+      setLoading(false);
     }).catch((err)=>{
       console.error(err.message);
     })
@@ -90,7 +94,6 @@ const ChatMessages = (props) => {
   return (
     <>
     <div className='border m-5 d-flex flex-column justify-content-between' style={{ width: '65%' }}>
-
     {/* header */}
     <div className="bg-white border-b p-3">
       <Container fluid>
@@ -124,7 +127,9 @@ const ChatMessages = (props) => {
   </div>
 )}
 
+  {loading && ((props.groupId)||(props.userId)) && <PageLoader/>}
 <div className='messages-container px-lg-4 px-2 py-3' id="messages-box-scroll-1234">
+  {loading}
   {messages && messages.map(message => (
     <div
       key={message._id}
@@ -163,10 +168,10 @@ const ChatMessages = (props) => {
 
   {(!messages) && (!props.groupId) && (props.userId) && startChat(props.userId)}
 
-  {(!messages) && (!props.userId) && (props.groupId) && (
+  {(!messages) && (!loading) && (!props.userId) && (props.groupId) && (
     <div className='empty-state text-center'>
       <i className="fas fa-paper-plane fa-2x mb-3 text-primary-subtle"></i>
-      <div className='text-secondary fw-light'>Start messaging to see messages here</div>
+      <div className='text-secondary fw-light'>{loading} Start messaging to see messages here</div>
     </div>
   )}
 </div>
