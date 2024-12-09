@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import defaultimg from './default.jpg';
-import { Modal, Button, Container, Row, Col, Image, ListGroup } from 'react-bootstrap';
+import { Modal, Button,  Image, ListGroup } from 'react-bootstrap';
 export default function Profile() {
     const [show, setShow] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);

@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import Authform from './components/Authentication/Authform';
-import Profile from './components/Profile';
+import Profile from './components/Profile/Profile';
 import WisprLanding from './components/LandingPage/WisprLanding';
 import WisprNav from './components/LandingPage/WisprNav';
 import PageLoader from './components/Loader/PageLoader';
