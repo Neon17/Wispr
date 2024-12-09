@@ -1,11 +1,27 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Modal } from 'react-bootstrap';
 import defaultimg from './default.jpg';
+import { Modal, Button, Container, Row, Col, Image, ListGroup } from 'react-bootstrap';
 export default function Profile() {
     const [show, setShow] = useState(false);
     const [imagePreview, setImagePreview] = useState(null);
     const [profile, setProfile] = useState({});
+    const [friends, setFriends] = useState([]);
+
+    useEffect(() => {
+      // Fetch friends from an API or define them statically
+      const fetchFriends = async () => {
+        // Example static friends list
+        const friendsList = [
+          { id: 1, userName: 'Kushal Baral', img: defaultimg },
+          { id: 2, userName: 'Rajan Timilsina', img: defaultimg },
+          { id: 3, userName: 'Neon Neupane', img: defaultimg },
+        ];
+        setFriends(friendsList);
+      };
+  
+      fetchFriends();
+    }, []);
   
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -173,6 +189,22 @@ export default function Profile() {
             </form>
           </Modal.Body>
         </Modal>
+        <div className="friends-section mt-4"style={{ maxwidth:"20vw" }}>
+        <h2>Friends</h2>
+        <ListGroup >
+          {friends.map(friend => (
+            <ListGroup.Item key={friend.id} className="d-flex align-items-center">
+              <Image src={friend.img} roundedCircle width="50" height="50" className="me-3" />
+              <div className="flex-grow-1">
+                <p className="mb-1">{friend.userName}</p>
+              </div>
+              <Button variant="link" onClick={() => alert(`Viewing profile of ${friend.userName}`)} className="text-decoration-none">
+                <i className="fas fa-user fa-lg"></i>
+              </Button>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      </div>
       </div>
     )
 }
