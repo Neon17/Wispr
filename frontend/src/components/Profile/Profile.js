@@ -69,7 +69,7 @@ export default function Profile() {
           <div className="row">
             <div className="col-md-3">
               <img
-                src={profile.image || imagePreview || defaultimg}
+                src={`http://localhost:5000/profileImages/${profile.profilePicture}` || imagePreview || defaultimg}
                 alt="Profile"
                 className="img-fluid rounded-circle  item-center shadow"
                 style={{ width: '250px', height: '250px', objectFit: 'cover' ,animation: 'zoomIn 0.5s'}}

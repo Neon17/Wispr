@@ -76,7 +76,22 @@ exports.getAllUsers = asyncErrorHandler(async(req,res,next)=>{
 })
 
 exports.uploadProfilePicture = asyncErrorHandler(async(req,res,next)=>{
+    if (!req.body) throw new Error('Request body should be in valid JSON format');
+    if (req.files) {
+        let filePath = `/upload/images/${req.file.fileName}`;
+        res.render("image",{
+            filePath
+        })
+    }
+    //save fileName in db
+    let updatedUser = await User.findByIdAndUpdate(req.user._id, {
+        profilePicture: req.fileName
+    }, {new: true, runValidators: false});
 
+    res.status(200).json({
+        status: 'success',
+        data: updatedUser
+    })
 })
 
 exports.profile = asyncErrorHandler(async(req,res,next)=>{

@@ -7,6 +7,7 @@ const userRouter = require('./routes/UserRouter');
 
 app.use(express.json());
 app.use(express.static('./public'));
+app.use(express.static(`${__dirname}/upload`));
 
 const corsOptions = {
   origin : [

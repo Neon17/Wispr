@@ -6,6 +6,7 @@ import Profile from './components/Profile/Profile';
 import WisprLanding from './components/LandingPage/WisprLanding';
 import WisprNav from './components/LandingPage/WisprNav';
 import PageLoader from './components/Loader/PageLoader';
+import UploadProfilePicture from './components/UploadProfilePicture';
 
 function App(){
   return (
@@ -18,6 +19,7 @@ function App(){
           <Route exact path="/home" element={localStorage.getItem('token')?<Home/>:<Authform/>} />
           <Route exact path="/auth" element={<Authform/>}/>
           <Route exact path="/profile" element={localStorage.getItem('token')?<Profile/>:<Authform/>} />
+          <Route exact path="/uploadProfilePicture" element={<UploadProfilePicture/>} />
           <Route path='*' element={<div className='text-center p-5' style={{marginTop: '76px'}}>Page Not Found</div>} />
         </Routes>
       </Router>
