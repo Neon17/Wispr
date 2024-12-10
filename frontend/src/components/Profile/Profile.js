@@ -101,7 +101,7 @@ export default function Profile() {
               <div className="text-center mb-3">
                 <div className="position-relative d-inline-block rounded-circle bg-light border"style={{ width: '100px', height: '100px', objectFit: 'cover' }}>
                   <img
-                    src={imagePreview || profile.image || defaultimg}
+                    src={imagePreview || `http://localhost:5000/profileImages/${profile.profilePicture}` || defaultimg}
                     alt="Preview"
                     className="rounded-circle "
                     style={{ width: '100px', height: '100px', objectFit: 'cover' }}
