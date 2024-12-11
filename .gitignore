@@ -1,6 +1,6 @@
 
 backend/node_modules
 backend/config.env
-backend/upload/profileImages/*.jpg
+backend/upload/profileImages/
 
 node_modules
