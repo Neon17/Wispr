@@ -13,11 +13,8 @@ const ChatMessages = (props) => {
   const [messageText, setMessageText] = useState("");
   const [status, setStatus] = useState(false); //status when messages need to be updated
   const [scrollStatus, setScrollStatus] = useState(0); //scroll to bottom at first
-  const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
-    setLoading(true);
-    setMessages(null);
     if (props.groupId!=null)
       fetchMessages();
     setStatus(false);
@@ -30,15 +27,15 @@ const ChatMessages = (props) => {
       else console.log('failed to send message');
     })
     props.socket.on('new-message-received',(message)=>{
-      if ((message!=undefined)||(message!=null)){
-        if (message.groupId==props.groupId){
-          console.log("In same room from ChatMessages");
-          if (!status){
-            setStatus(true);
+        if ((message!=undefined)||(message!=null)){
+          if (message.groupId==props.groupId){
+            console.log("In same room from ChatMessages");
+            if (!status){
+              setStatus(true);
             setScrollStatus(0);
+            }
           }
         }
-      }
     });
     if (scrollStatus<=15){
       if ((props.groupId)){
@@ -56,7 +53,6 @@ const ChatMessages = (props) => {
     }, axiosConfig).then((res)=>{
       // console.log(res.data);
       setMessages(res.data.data);
-      setLoading(false);
     }).catch((err)=>{
       console.error(err.message);
     })
@@ -127,9 +123,7 @@ const ChatMessages = (props) => {
   </div>
 )}
 
-  {loading && ((props.groupId)||(props.userId)) && <PageLoader/>}
 <div className='messages-container px-lg-4 px-2 py-3' id="messages-box-scroll-1234">
-  {loading}
   {messages && messages.map(message => (
     <div
       key={message._id}
@@ -168,10 +162,10 @@ const ChatMessages = (props) => {
 
   {(!messages) && (!props.groupId) && (props.userId) && startChat(props.userId)}
 
-  {(!messages) && (!loading) && (!props.userId) && (props.groupId) && (
+  {(!messages) && (!props.userId) && (props.groupId) && (
     <div className='empty-state text-center'>
       <i className="fas fa-paper-plane fa-2x mb-3 text-primary-subtle"></i>
-      <div className='text-secondary fw-light'>{loading} Start messaging to see messages here</div>
+      <div className='text-secondary fw-light'>Start messaging to see messages here</div>
     </div>
   )}
 </div>
