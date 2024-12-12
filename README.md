@@ -137,6 +137,15 @@ Inside /backend and /frontend folder, run below command separately
     "id": "674d960eca7e9f02b6df1e60"
   }
     ```
+  Or
+  ```js
+  {
+    "name": "The Avengers",
+    "id": ["675a8916d009e139336104b8","675a8928d009e139336104ba"]
+  }
+  ```
+  *Note: Logged in user (self) is auto added in the group*
+  
 
 #### Add Members in Group
 
@@ -151,6 +160,8 @@ Inside /backend and /frontend folder, run below command separately
   }
     ```
 *Note: "id" means group ID*
+
+---
 
   
 #### Get All Messages
@@ -181,7 +192,8 @@ Inside /backend and /frontend folder, run below command separately
 - **Purpose:** To get all profile info like username, firstName,...
 
 
-    ## Database/Models
+
+## Database/Models
 
 ### User Model
 
