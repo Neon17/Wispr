@@ -137,6 +137,22 @@ Inside /backend and /frontend folder, run below command separately
     "id": "674d960eca7e9f02b6df1e60"
   }
     ```
+
+#### Add Members in Group
+
+- **Path:** `/addGroup`
+- **Method:** POST
+- **Purpose:** To add user(s) in an existing group
+- **Body:**
+  ```json
+  {
+    "id": "675a8f37d009e139336104d4",
+    "members": ["675a8928d009e139336104ba","675a698f478a6cc35beb73e2"]
+  }
+    ```
+*Note: "id" means group ID*
+
+  
 #### Get All Messages
 
 - **Path:** `/getAllMessages`
