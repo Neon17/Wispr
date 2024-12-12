@@ -15,7 +15,8 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
 
 ## Installation
 
-Inside /backend and /frontend folder, run below command separately
+Download NodeJs if you haven't from the website [https://nodejs.org/]
+Open command prompt targeting /backend and /frontend folder, run below command separately for each
 ```cmd
   npm install
 ```
