@@ -149,24 +149,51 @@ exports.showSearchUsername = asyncErrorHandler(async(req,res,next)=>{
 })
 
 exports.createGroup = asyncErrorHandler(async(req,res,next)=>{
-    //It forms 2 user group
     if (!req.body.id) throw new Error("At least one user is needed to form a group");
-    if (req.body.id==req.user._id) throw new Error("You can't create group with yourself");
-    let previousGroups = await Group.find({});
-    let status = 0;
-    previousGroups.map((previousGroup)=>{
-        status = 0;
-        if (previousGroup.members.length==2){
-            if ((previousGroup.members[0].toString==req.body.id)||(previousGroup.members[1].toString==req.body.id)) 
-                throw new Error('That group already exists');
-        }
-    })
-    let group = await Group.create({
-        members: [req.user._id, req.body.id]
-    })
+
+    if (typeof(req.body.id)=='object') {
+        let ids = [];
+        ids.push(req.user._id);
+        req.body.id.map((singleId)=>{
+            if (singleId!=req.user._id)
+                ids.push(singleId);
+        })
+        let prepareObj={};
+        if (req.body.name)
+            prepareObj.name = req.body.name;
+        prepareObj.members = ids;
+        let group = await Group.create(prepareObj);
+        return res.status(200).json({
+            status: 'success',
+            data: group
+        }) 
+    }
+    else if (typeof(req.body.id)=='string'){
+        if (req.body.id==req.user._id) throw new Error("You can't create group with yourself");
+        let user = await User.findById(req.user._id);
+        if (user.length==0) throw new Error("Selected User doesn't exists");
+        let previousGroups = await Group.find({});
+        let status = 0;
+
+        //It is necessary to check previousGroup formed because every direct message is treated as group here
+        previousGroups.map((previousGroup)=>{
+            status = 0;
+            if (previousGroup.members.length==2){
+                if ((previousGroup.members[0].toString==req.body.id)||(previousGroup.members[1].toString==req.body.id)) 
+                    throw new Error('That group already exists');
+            }
+        })
+        let group = await Group.create({
+            members: [req.user._id, req.body.id]
+        })
+        return res.status(200).json({
+            status: 'success',
+            data: group
+        })
+    }
     res.status(200).json({
-        status: 'success',
-        data: group
+        status: 'error',
+        message: 'request body should have id of type string or object(array)'
     })
 })
 
