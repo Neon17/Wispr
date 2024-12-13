@@ -11,14 +11,19 @@ const getJoinedGroups = asyncErrorHandler(async(req,res,next)=>{
         }).exec();
     
     let groups=[];
+    let groupIds = [];
     allGroups.forEach((group)=>{
         for (i=0;i<group.members.length;i++){
             if (group.members[i]._id.toString()==req.user._id.toString()) {
+                groupIds.push(group._id);
                 groups.push(group);
                 break;
             }
         }
     })
+    for (let j=0;j<groupIds.length;j++){
+        await Group.findByIdAndUpdate(groupIds[j],{onlineStatus: true});
+    }
     return groups;
 })
 
@@ -247,26 +252,91 @@ exports.getAllMessages = asyncErrorHandler(async(req,res,next)=>{
     if (!req.body.groupId) throw new Error('Message can only be seen in the group');
     let groupMessages = await Message.find({groupId: req.body.groupId})
         .populate('senderId').exec();
+    let group = await Group.findById(req.body.groupId).exec();
+    let readStatus = [];
     let messages = JSON.parse(JSON.stringify(groupMessages));
+    let defaultReadStatus = [];
+
+    let seenBy = [];
+    let showChatHead = [];
+
+    for (let i=0;i<group.members.length;i++){
+        if (group.members[i].toString()==req.user._id.toString()){
+            defaultReadStatus.push(true);
+        }
+        else defaultReadStatus.push(false);
+    }
+
+
     for (i=0;i<messages.length;i++){
+
         if (messages[i].senderId._id.toString()==req.user._id.toString())
             messages[i].isUser = true;
         else messages[i].isUser = false;
+
+        if (messages[i].readStatus.length==0){
+            await Message.findByIdAndUpdate(messages[i]._id, {readStatus: defaultReadStatus});
+        }
+        else {
+            readStatus = [];
+            for (j=0;j<messages[i].readStatus.length;j++){
+                if (group.members[j].toString()==req.user._id.toString()){
+                    readStatus.push(true);
+                }
+                else readStatus.push(messages[i].readStatus[j]);
+            }
+            await Message.findByIdAndUpdate(messages[i]._id, {readStatus: readStatus});
+        }
     }
     if (messages.length==0) messages = null;
+
+    //For Retrieving Seen
+    let temp = 0, tempSeenBy = [];
+    for (j=0;j<messages.length;j++){
+        tempSeenBy = []; temp = 0;
+        for (k=0;k<messages[j].readStatus.length;k++){
+            if (messages[j].readStatus[k] && !(group.members[k].toString()==req.user._id.toString())){
+                temp = 1; break;
+            }
+        }
+        if (temp==0) tempSeenBy.push(group.onlineStatus);
+        else {
+            for (k=0;k<messages[j].readStatus.length;k++){
+                tempSeenBy.push(messages[j].readStatus[k]);
+            }
+        }
+        seenBy.push(tempSeenBy);
+    }
+
+    //For Making Ease in Frontend
+    temp = 0; tempSeenBy = [];
+    //----Needs to solve soon
+
+
     res.status(200).json({
         status: 'success',
-        data: messages
+        data: messages,
+        seenBy
     })
 })
 
 exports.sendMessage = asyncErrorHandler(async (req,res,next)=>{
     //req.body contains groupId, message
     if (!req.body.groupId || !req.body.message) throw new Error('Non-empty message can only be sent with the group');
+    let group = await Group.findById(req.body.groupId).populate('members');
+    if (group.length==0) throw new Error('Group with that ID doesnt exist');
+    let readStatus = [];
+    for (let i=0;i<group.members.length;i++){
+        if (group.members[i]._id.toString()!=req.user._id.toString()){
+            readStatus.push(false);
+        }
+        else readStatus.push(true);
+    }
     let message = await Message.create({
         groupId: req.body.groupId,
         message: req.body.message,
-        senderId: req.user._id
+        senderId: req.user._id,
+        readStatus: readStatus
     });
     res.status(200).json({
         status: 'success',

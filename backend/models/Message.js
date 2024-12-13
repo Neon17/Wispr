@@ -19,7 +19,11 @@ const messageSchema = new mongoose.Schema({
         type: Date,
         required: [true, 'Date Time is required'],
         default: Date.now()
-    }
+    },
+    readStatus: [{
+        type: Boolean,
+        default: false
+    }]
     // we can make attachments, emoji later
 },
     {toJSON: { virtuals: true }},

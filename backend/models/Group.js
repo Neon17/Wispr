@@ -13,6 +13,10 @@ const groupSchema = new mongoose.Schema({
         type: String,
         required: true,
         default: Date.now()
+    },
+    'onlineStatus': {
+        type: Boolean,
+        default: false
     }
 })
 
