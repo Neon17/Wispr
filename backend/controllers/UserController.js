@@ -22,7 +22,10 @@ const getJoinedGroups = asyncErrorHandler(async (req, res, next) => {
         }
     })
     for (let j = 0; j < groupIds.length; j++) {
-        await Group.findByIdAndUpdate(groupIds[j], { onlineStatus: true });
+        let latestMessage = await Message.findOne({groupId: groupIds[j]}).sort('-dateTime').exec();
+        if ((latestMessage!=null)&&(latestMessage.senderId.toString()!=req.user._id.toString())){
+            await Group.findByIdAndUpdate(groupIds[j], { onlineStatus: true });
+        }
     }
     return groups;
 })
@@ -310,8 +313,10 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
 
     //For Making Ease in Frontend
     temp = 0; tempSeenBy = [];
+    let status = 0;
     for (i = 0; i < (seenBy.length - 1); i++) {
         tempSeenBy = []
+        status = 0;
         if ((seenBy[i].length > 1) && (seenBy[i+1].length > 1)) {
             for (j = 0; j < seenBy[i].length; j++) {
                 if (j>=seenBy[i+1].length){
@@ -327,9 +332,9 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
             for (j = 0; j < seenBy[i].length; j++)
                 tempSeenBy.push(seenBy[i][j]);
         }
-        else tempSeenBy.push(seenBy[i]);
-        console.log(tempSeenBy);
-        showChatHead.push(tempSeenBy);
+        else status = 1;
+        if (status == 1) showChatHead.push(seenBy[i]);
+        else showChatHead.push(tempSeenBy);
     }
     showChatHead.push(seenBy[seenBy.length-1]);
 
@@ -358,6 +363,8 @@ exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
         senderId: req.user._id,
         readStatus: readStatus
     });
+    //after sending new message, group onlineStatus (delivery) is set false
+    await Group.findByIdAndUpdate(group._id,{ onlineStatus: false });
     res.status(200).json({
         status: 'success',
         data: message
