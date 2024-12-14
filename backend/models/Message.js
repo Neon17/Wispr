@@ -23,7 +23,11 @@ const messageSchema = new mongoose.Schema({
     readStatus: [{
         type: Boolean,
         default: false
-    }]
+    }],
+    deliveryStatus: {
+        type: Boolean,
+        default: false
+    }
     // we can make attachments, emoji later
 },
     {toJSON: { virtuals: true }},
