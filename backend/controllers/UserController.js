@@ -4,6 +4,31 @@ const Message = require('../models/Message');
 const asyncErrorHandler = require("../utils/asyncErrorHandler");
 
 
+const readUnreadMessage = async (messages, id)=>{
+    // It sets ru status for logged in user based on messages
+    // id is id of user
+    let ruStatus = [], tempStatus = false;
+    let userCountInMembers = -1;
+    let group;
+
+    for (let i = 0; i<messages.length;i++){
+        if (messages[i]==undefined) continue;
+        group = await Group.findById(messages[i].groupId);
+        for (let j=0;j<group.members.length;j++){
+            if (group.members[j].toString()==id) {
+                userCountInMembers = j; break;
+            }
+        }
+        tempStatus = messages[i].readStatus[userCountInMembers]
+        if ((messages[i].senderId.toString()!=id.toString())&&(!tempStatus))
+            ruStatus.push(false);
+        else 
+            ruStatus.push(true);
+    }
+
+    return ruStatus;
+}
+
 const getJoinedGroups = asyncErrorHandler(async (req, res, next) => {
     let allGroups = await Group.find({})
         .populate({
@@ -21,10 +46,17 @@ const getJoinedGroups = asyncErrorHandler(async (req, res, next) => {
             }
         }
     })
+
+    //for setting delivery status
     for (let j = 0; j < groupIds.length; j++) {
         let latestMessage = await Message.findOne({groupId: groupIds[j]}).sort('-dateTime').exec();
         if ((latestMessage!=null)&&(latestMessage.senderId.toString()!=req.user._id.toString())){
             await Group.findByIdAndUpdate(groupIds[j], { onlineStatus: true });
+            let m = await Message.updateMany(
+                {groupId: groupIds[j]},
+                {$set: {deliveryStatus: true}},
+                {new: true}
+            );
         }
     }
     return groups;
@@ -114,11 +146,13 @@ exports.showAllGroupList = asyncErrorHandler(async (req, res, next) => {
     let groups = await getJoinedGroups(req, res, next);
     groups = nameJoinedGroups(groups, req.user._id);
     let latestMessages = await getLatestMessages(groups);
+    let ruStatus = await readUnreadMessage(latestMessages,req.user._id);
     res.status(200).json({
         status: 'success',
         data: {
             groups: groups,
-            latestMessages: latestMessages
+            latestMessages: latestMessages,
+            ruStatus
         }
     })
 })
@@ -302,7 +336,7 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
                 temp = 1; break;
             }
         }
-        if (temp == 0) tempSeenBy.push(group.onlineStatus);
+        if (temp == 0) tempSeenBy.push(messages[j].deliveryStatus);
         else {
             for (k = 0; k < messages[j].readStatus.length; k++) {
                 tempSeenBy.push(messages[j].readStatus[k]);
