@@ -13,12 +13,13 @@ const ChatMessages = (props) => {
   const [messageText, setMessageText] = useState("");
   const [status, setStatus] = useState(false); //status when messages need to be updated
   const [scrollStatus, setScrollStatus] = useState(0); //scroll to bottom at first
-
+ 
   useEffect(()=>{
-    if (props.groupId!=null)
+    if (props.groupId!=null )
       fetchMessages();
     setStatus(false);
   },[props.groupId, props.userId,status])
+  
 
   useEffect(()=>{
     props.socket.on('send-message-status',(res)=>{

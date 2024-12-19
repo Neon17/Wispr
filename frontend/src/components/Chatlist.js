@@ -44,6 +44,7 @@ const ChatList = (props) => {
       }).then((response) => {
         if (response.data.status === 'success') {
           setGroups(response.data.data); // Save user data to state
+          console.log('Groups:', response.data.data);
         } else {
           console.error('Failed to fetch users:', response.data.message);
         }
@@ -133,7 +134,10 @@ const ChatList = (props) => {
             <div
               key={user._id}
               className={` mb-3 rounded-4 ${props.userId === user._id ? 'bg-light' : 'hover-bg-light'}`}
-              onClick={() => props.userClick(user._id)}
+              onClick={() => {
+                alert('User Clicked');
+                props.userClick(user._id)}
+              }
               role="button"
               style={{
                 cursor: 'pointer',
