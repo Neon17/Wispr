@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form, InputGroup, Button } from 'react-bootstrap';
+import AddGroupButton from './AddGroupButton';
 
 const ChatList = (props) => {
   const [users, setUsers] = useState([]);
@@ -97,6 +98,7 @@ const ChatList = (props) => {
         </div>
       </div>
       {/* Users Section */}
+      <AddGroupButton/>
    <div className="d-flex align-items-center justify-content-center pt-3 pb-2 border-top">
     <div className="pr-2">
       <i className="fas fa-users text-primary" style={{ fontSize: '20px' }}></i>
