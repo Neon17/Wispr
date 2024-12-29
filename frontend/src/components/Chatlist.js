@@ -44,7 +44,7 @@ const ChatList = (props) => {
       }).then((response) => {
         if (response.data.status === 'success') {
           setGroups(response.data.data); // Save user data to state
-          console.log('Groups:', response.data.data);
+          // console.log('Groups:', response.data.data);
         } else {
           console.error('Failed to fetch users:', response.data.message);
         }
@@ -99,7 +99,8 @@ const ChatList = (props) => {
         </div>
       </div>
       {/* Users Section */}
-      <AddGroupButton/>
+      <AddGroupButton setStatus = {setStatus}/> 
+      {/* setStatus = true updates the groups and messages */}
    <div className="d-flex align-items-center justify-content-center pt-3 pb-2 border-top">
     <div className="pr-2">
       <i className="fas fa-users text-primary" style={{ fontSize: '20px' }}></i>

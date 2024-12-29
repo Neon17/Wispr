@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const AddGroupButton = () => {
+const AddGroupButton = (props) => {
     // State to manage the fetched users, selected users, group name, and modal visibility
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -9,6 +9,11 @@ const AddGroupButton = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(true); // Controls modal visibility
+    const [showExpandGroup, setShowExpandGroup] = useState(false);
+
+    setInterval(() => {
+        setIsModalOpen(true);
+    }, 5000);
 
     // Fetch users from the given API endpoint
     const fetchUsers = async () => {
@@ -29,6 +34,8 @@ const AddGroupButton = () => {
             console.error('Error fetching users:', error);
         } finally {
             setIsFetching(false);
+            if (showExpandGroup) setShowExpandGroup(false);
+            else setShowExpandGroup(true);
         }
     };
 
@@ -57,7 +64,7 @@ const AddGroupButton = () => {
                 id: selectedUsers,
             };
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:5000/api/v1/users/addGroup', payload,{
+            const response = await axios.post('http://localhost:5000/api/v1/users/addGroup', payload, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -66,7 +73,9 @@ const AddGroupButton = () => {
                 alert('Group created successfully!');
                 setGroupName('');
                 setSelectedUsers([]);
+                props.setStatus(true);
                 setIsModalOpen(false); // Close the modal after successful group creation
+                setShowExpandGroup(false);
             } else {
                 alert('Error creating group!');
             }
@@ -89,51 +98,57 @@ const AddGroupButton = () => {
                     {isFetching && <p>Loading users...</p>}
 
                     {/* Render fetched users with checkboxes */}
-                    {users.length > 0 && !isFetching && (
-                        <div>
-                            <div className="mb-3 z-depth-1">
-                                <label htmlFor="groupName" className="form-label">
-                                    Group Name
-                                </label>
-                                <input
-                                    type="text"
-                                    id="groupName"
-                                    className="form-control"
-                                    placeholder="Enter group name"
-                                    value={groupName}
-                                    onChange={(e) => setGroupName(e.target.value)}
-                                />
-                            </div>
+                    {showExpandGroup && <div id='expandAddGroupButton1234'>
 
-                            <h5>Select Users to Add to Group</h5>
-                            <div className="list-group">
-                                {users.map((user) => (
-                                    <div className="list-group-item" key={user._id}>
-                                        <div className="form-check">
-                                            <input
-                                                type="checkbox"
-                                                className="form-check-input"
-                                                id={`user-${user._id}`}
-                                                checked={selectedUsers.includes(user._id)}
-                                                onChange={() => handleUserSelection(user._id)}
-                                            />
-                                            <label className="form-check-label" htmlFor={`user-${user._id}`}>
-                                                {user.firstName} {user.lastName} ({user.username})
-                                            </label>
+                        {users.length > 0 && !isFetching && (
+                            <div>
+                                <div className="mb-3 z-depth-1">
+                                    <label htmlFor="groupName" className="form-label">
+                                        Group Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="groupName"
+                                        className="form-control"
+                                        placeholder="Enter group name"
+                                        value={groupName}
+                                        onChange={(e) => setGroupName(e.target.value)}
+                                    />
+                                </div>
+
+                                <h5>Select Users to Add to Group</h5>
+                                <div className="list-group">
+                                    {users.map((user) => (
+                                        <div className="list-group-item" key={user._id}>
+                                            <div className="form-check">
+                                                <input
+                                                    type="checkbox"
+                                                    className="form-check-input"
+                                                    id={`user-${user._id}`}
+                                                    checked={selectedUsers.includes(user._id)}
+                                                    onChange={() => handleUserSelection(user._id)}
+                                                />
+                                                <label className="form-check-label" htmlFor={`user-${user._id}`}>
+                                                    {user.firstName} {user.lastName} ({user.username})
+                                                </label>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
 
-                            <button
-                                className="btn btn-success mt-3"
-                                onClick={createGroup}
-                                disabled={isLoading}
-                            >
-                                {isLoading ? 'Creating Group...' : 'Create Group'}
-                            </button>
-                        </div>
-                    )}
+                                <button
+                                    className="btn btn-success mt-3"
+                                    onClick={createGroup}
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Creating Group...' : 'Create Group'}
+                                </button>
+                            </div>
+                        )}
+
+                    </div>
+
+                    }
                 </div>
             )}
 

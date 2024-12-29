@@ -12,7 +12,10 @@ const readUnreadMessage = async (messages, id)=>{
     let group;
 
     for (let i = 0; i<messages.length;i++){
-        if (messages[i]==undefined) continue;
+        if (messages[i]==undefined){
+            ruStatus.push(null);
+            continue;
+        }
         group = await Group.findById(messages[i].groupId);
         for (let j=0;j<group.members.length;j++){
             if (group.members[j].toString()==id) {
