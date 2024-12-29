@@ -13,8 +13,12 @@ const ChatMessages = (props) => {
   const [messageText, setMessageText] = useState("");
   const [status, setStatus] = useState(false); //status when messages need to be updated
   const [scrollStatus, setScrollStatus] = useState(0); //scroll to bottom at first
+  const [ruStatus, setruStatus] = useState(null); //read/unread status
+  const [members, setMembers] = useState(null); //members of group
  
   useEffect(()=>{
+    if (ruStatus!=null)
+      console.log(ruStatus);
     if (props.groupId!=null )
       fetchMessages();
     setStatus(false);
@@ -54,6 +58,8 @@ const ChatMessages = (props) => {
     }, axiosConfig).then((res)=>{
       // console.log(res.data);
       setMessages(res.data.data);
+      setruStatus(res.data.showChatHead);
+      setMembers(res.data.members);
     }).catch((err)=>{
       console.error(err.message);
     })
@@ -125,7 +131,7 @@ const ChatMessages = (props) => {
 )}
 
 <div className='messages-container px-lg-4 px-2 py-3' id="messages-box-scroll-1234">
-  {messages && messages.map(message => (
+  {messages && messages.map((message,index) => (
     <div
       key={message._id}
       className={`message-wrapper d-flex align-items-end ${message.isUser ? 'flex-row-reverse' : ''} mb-4`}
@@ -146,11 +152,20 @@ const ChatMessages = (props) => {
           <p className="message-text">{message.message}</p>
           <div className={`message-meta ${message.isUser ? 'justify-content-end' : ''}`}>
             <span className="message-time">{message.dateTime}</span>
-            {message.isUser && (
+            {message.isUser && ruStatus[index]=='true' && (
               <i className="fas fa-check-double message-status"></i>
+            )}
+            {message.isUser && ruStatus[index]=='false' && (
+              <i className="fas fa-check message-status"></i>
             )}
           </div>
         </div>
+          {ruStatus[index].length>1 && ruStatus[index].map((ru,i)=>(
+            <span>
+              {i==0 && <span>Seen By </span>}
+              {ru && <span>{members[i].firstName} </span>}
+            </span>
+          ))}
         
         {!message.isUser && (
           <div className="sender-name">

@@ -375,10 +375,15 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
     }
     showChatHead.push(seenBy[seenBy.length-1]);
 
+    //to get all members of group
+    let members = await Group.findById(req.body.groupId).populate('members');
+    members = members.members;
+
     res.status(200).json({
         status: 'success',
         data: messages,
-        showChatHead
+        members,
+        showChatHead: seenBy
     })
 })
 
