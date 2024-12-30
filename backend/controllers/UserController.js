@@ -245,6 +245,26 @@ exports.addFriend = asyncErrorHandler(async(req,res,next)=>{
     }
 })
 
+exports.fetchAllUsersExceptFriends = asyncErrorHandler(async(req,res,next)=>{
+    let friends = req.user.friends;
+    let users = await User.find({});
+    let selectedUser = [];
+    for (let i=0;i<users.length;i++){
+        let c = 0;
+        for (let j=0;j<friends.length;j++){
+            if (friends.toString()==users[i]._id.toString()){
+                c = 1;
+                break;
+            }
+        }
+        if (c==0) selectedUser.push(users[i]);
+    }
+    res.status(200).json({
+        status: 'success',
+        data: selectedUser
+    })
+})
+
 
 exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
     let users = await User.find({ _id: { $ne: { _id: req.user._id } } });
