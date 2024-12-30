@@ -105,6 +105,68 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
 
 ---
 
+#### Add/Confirm Friend
+
+- **Path:**  `/addFriend`
+- **Method:** POST
+- **Purpose:** To add or confirm friend
+- **Result:** (Result are shown after expanding foreign key "friends" of logged in "User", see User Model)
+  ```json
+    "status": "success",
+    "data": {
+        /*smith@gmail.com is logged in user*/
+        "gender": "male",
+        "_id": "675a8c71d009e139336104be",
+        "username": "User1733986516677",
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "smith@gmail.com",
+        "password": "$2b$12$5uBUol/iJr4zqeyZ5ZLo8elQXeeIyqTj1Joawikz2X6pVt6DBJWgG",
+        "__v": 0,
+        "friend_requests": [],
+        "friends": [
+            {
+                "gender": "male",
+                "_id": "675a8916d009e139336104b8",
+                "username": "User1733986516677",
+                "firstName": "Shyam",
+                "lastName": "Chhettri",
+                "email": "shyam@gmail.com",
+                "password": "$2b$12$anxHRvXBqHifziPJjNdtlug2.2416xpNmVF0muH1I6.9XKi.rDYiu",
+                "__v": 0,
+                "add_friend_requests": [],
+                "friend_requests": [],
+                "friends": [
+                    "675a8c71d009e139336104be"
+                ]
+            }
+        ],
+        "add_friend_requests": []
+    }
+  ```
+
+#### Get All Friend Requests
+
+- **Path:** `/getAllFriendRequests`
+- **Method:** GET
+- **Purpose:** To display all friend requests logged in user have received
+- **Result:** (Friend Requests are shown in array expanding foreign key "friend_requests" in "User", see User Model)
+  ```json
+    "status": "success",
+    "data": []
+  ```
+
+#### Get All Friends
+
+- **Path:** `/getAllFriends`
+- **Method:** GET
+- **Purpose:** To display all friends logged in user have
+- **Result:** (Friends are shown in array, see User Model)
+  ```json
+    "status": "success",
+    "data": []
+  ```
+
 #### Show All Groups
 
 - **Path:** `/showAllGroupList`
@@ -205,6 +267,14 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
   - `lastName`
   - `email`
   - `password`
+  - `confirmPassword`
+  - `friends` (ID from User Model)
+  - `add_friend_requests` (ID from User Model)
+  - `friend_requests` (ID from User Model)
+  - `dob`
+  - `profilePicture`
+  - `bio`
+  - `gender`
 
 ---
 
@@ -251,6 +321,13 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
 3. **Messaging:**
    - Fetch all messages in a group using **Get All Messages** API.
    - Send messages by hitting **Send Message** API with the `groupId` and `message`.
+  
+4. **Friends:**
+   - Add Friend to add new friend.
+   - After adding friend, that users' ID is stored in `add_friend_requests` of logged in User model
+   - Also, logged in User Id is stored in that user's `friend_requests` column
+   - After that user hit /addFriend to logged in User, then seeing `friend_requests`, it confirms friend and
+   - Both friends will delete their Ids from `add_friend_requests` and `friend_requests`; and add Id on `friends`
 
 
 ## Upcoming Features
