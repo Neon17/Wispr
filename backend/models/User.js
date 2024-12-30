@@ -39,6 +39,18 @@ const userSchema = new mongoose.Schema({
             message: "Password and Confirm Password should match"
         }
     },
+    'friends': [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }],
+    'add_friend_requests': [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }],
+    'friend_requests': [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }],
     'dob': {
         type: Date
     },

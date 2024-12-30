@@ -111,6 +111,141 @@ const nameJoinedGroups = (groups, id) => {
     return groups;
 }
 
+exports.getAllFriends = asyncErrorHandler(async(req,res,next)=>{
+    //add friend and confirm friend should be there
+    //friends list should be in User Model
+    //add friend request should be in different table
+    //that table should have sender, receiver where sender is the one who request for friendship
+    //receiver is the one who sees the friend request and confirms it (if he/she wants)
+    let members = await User.findById(req.user._id).populate('friends').exec();
+    members = members.friends;
+    res.status(200).json({
+        status: 'success',
+        data: members
+    })
+})
+
+exports.getAllFriendRequests = asyncErrorHandler((async(req,res,next)=>{
+    let members = await User.findById(req.user._id).populate('friend_requests').exec();
+    members = members.friend_requests;
+    res.status(200).json({
+        status: 'success',
+        data: members
+    })
+}))
+
+exports.addFriend = asyncErrorHandler(async(req,res,next)=>{
+    //It adds or confirms friend request
+
+    if (!req.body.id)
+        throw new Error('Must be some user to add friend');
+    if (req.body.id.toString() == req.user._id.toString()) throw new Error('You cannot add friend with yourself');
+    let user = await User.findById(req.body.id);
+    if (!user) throw new Error('Invalid User Selection or Selected User may be deleted!');
+
+    //check if already been friend
+    let members = [];
+    if (req.user.friends)
+        members = req.user.friends;
+    for (let i=0;i<members.length;i++){
+        if (members[i].toString()==req.body.id.toString())
+            throw new Error('Already friend with selected user');
+    }
+
+    //check if logged in user already sent friend request to other user
+    members = [];
+    if (req.user.add_friend_requests)
+        members = req.user.add_friend_requests;
+    for (let i=0;i<members.length;i++){
+        if (members[i].toString()==req.body.id.toString())
+            throw new Error('Already sent friend request to that user');
+    }
+
+    //check if other user already sent friend request to this logged in user
+    let c = 0;
+    let updatedFriends = [];
+    let updatedFriendRequests = [];
+    let updatedAddFriendRequests = [];
+    let sameFriendCount = 0;
+    for (let i=0;i<req.user.friends.length;i++){
+        if (req.user.friends[i].toString()==req.body.id.toString()){
+            sameFriendCount++;
+            if (sameFriendCount>1) continue;
+        }
+        updatedFriends.push(req.user.friends[i].toString());
+    }
+    updatedFriends.push(req.body.id);
+    
+    for (let i=0;i<req.user.add_friend_requests.length;i++){
+        if (req.user.add_friend_requests[i].toString()==req.body.id.toString()) continue;
+        else updatedAddFriendRequests.push(req.user.add_friend_requests[i].toString());
+    }
+
+    for (let i=0;i<req.user.friend_requests.length;i++){
+        if (req.user.friend_requests[i].toString()==req.body.id.toString()){
+            c = 1; continue;
+        }  
+        updatedFriendRequests.push(req.user.friend_requests[i].toString());
+    }
+
+    //c = 1 denotes that user already had requested friendship with logged in user
+    //now we have to delete logged in user from friend_requests and that user from add_friend_requests of that user
+    if (c==1){
+        let friendUser = await User.findById(req.body.id);
+        let friends = [];
+        for (let i=0;i<friendUser.friends;i++){
+            friends.push(friendUser.friends[i].toString());
+        }
+        friendUser = friendUser.add_friend_requests;
+        let add_friend_requests = [];
+        for (let i = 0;i<friendUser.length;i++){
+            if (friendUser[i].toString()==req.user._id.toString()){
+                continue;
+            }
+            add_friend_requests.push(friendUser[i].toString());
+        }
+        friends.push(req.user._id);
+        await User.findByIdAndUpdate(req.body.id, 
+            {$set: 
+                {"friends": friends, "add_friend_requests": add_friend_requests}
+            }, 
+            {runValidators: false});
+
+        let updatedUser1 = await User.findByIdAndUpdate(req.user._id, 
+            {$set: 
+                {"friends": updatedFriends, "friend_requests": updatedFriendRequests, "add_friend_requests": updatedAddFriendRequests}
+            }, 
+            {new: true}).populate('friends');
+
+        res.status(200).json({
+            status: 'success',
+            data: updatedUser1
+        })
+        next();
+    }
+    else {
+        //That user should be added in add_friend_requests column of logged in user
+        members = [];
+        if (req.user.add_friend_requests)
+            members = req.user.add_friend_requests;
+        members.push(req.body.id);
+        let updatedUser = await User.findByIdAndUpdate(req.user._id, {add_friend_requests: members}, {new: true});
+    
+        //Adding logged in user ID in friend_requests column of that user
+        members = [];
+        if (user.friend_requests)
+            members  = user.friend_requests;
+        members.push(req.user._id);
+        await User.findByIdAndUpdate(req.body.id, {friend_requests: members});
+    
+        res.status(200).json({
+            status: 'success',
+            data: updatedUser
+        })
+    }
+})
+
+
 exports.getAllUsers = asyncErrorHandler(async (req, res, next) => {
     let users = await User.find({ _id: { $ne: { _id: req.user._id } } });
     res.status(200).json({
