@@ -1,7 +1,6 @@
 import { useEffect,useState } from "react";
 import axios from "axios";
 import { Form, InputGroup, Button,Container, Row, Col } from 'react-bootstrap';
-import PageLoader from './../components/Loader/PageLoader';
 
 const ChatMessages = (props) => {
   const [axiosConfig] = useState({
@@ -14,11 +13,9 @@ const ChatMessages = (props) => {
   const [status, setStatus] = useState(false); //status when messages need to be updated
   const [scrollStatus, setScrollStatus] = useState(0); //scroll to bottom at first
   const [ruStatus, setruStatus] = useState(null); //read/unread status
-  const [members, setMembers] = useState(null); //members of group
+  const [group, setGroup] = useState(null); //members of group
  
   useEffect(()=>{
-    if (ruStatus!=null)
-      console.log(ruStatus);
     if (props.groupId!=null )
       fetchMessages();
     setStatus(false);
@@ -59,7 +56,7 @@ const ChatMessages = (props) => {
       // console.log(res.data);
       setMessages(res.data.data);
       setruStatus(res.data.showChatHead);
-      setMembers(res.data.members);
+      setGroup(res.data.group);
     }).catch((err)=>{
       console.error(err.message);
     })
@@ -111,7 +108,7 @@ const ChatMessages = (props) => {
               </div>
             </div>
             <div>
-              <h6 className="mb-0">Chat Room</h6>
+              <h6 className="mb-0">{group && group.name}</h6>
               <small className="text-muted">Online</small>
             </div>
           </Col>
@@ -161,9 +158,21 @@ const ChatMessages = (props) => {
           </div>
         </div>
           {ruStatus[index].length>1 && ruStatus[index].map((ru,i)=>(
-            <span>
-              {i==0 && <span>Seen By </span>}
-              {ru && <span>{members[i].firstName} </span>}
+            <span key={`${group.members[i]._id}${index}${i}`}>
+              {/* {i==0 && <span>Seen By </span>}
+              {ru && <span>{group.members[i].firstName} </span>} */}
+              {ru && 
+                group.members[i].profilePicture && 
+                <img src={`http://localhost:5000//profileImages/${group.members[i].profilePicture}`} 
+                      className="float-end" width='20px' height='20px' style={{borderRadius: '50%', marginLeft: '1px'}} 
+                      alt={`${group.members[i].firstName}`} title={`${group.members[i].firstName}`}/>
+              }
+              {ru && 
+                !group.members[i].profilePicture &&
+                <img src={`http://localhost:5000//profileImages/defaultImages/${group.members[i].gender}Profile.png`}
+                      className="float-end" width='20px' height='20px' style={{borderRadius: '50%', marginLeft: '1px'}} 
+                      alt={`${group.members[i].firstName}`} title={`${group.members[i].firstName}`}/>
+              }  
             </span>
           ))}
         

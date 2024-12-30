@@ -76,6 +76,7 @@ const getLatestMessages = (async (groups) => {
 })
 
 const nameJoinedGroups = (groups, id) => {
+    //groups are parameter after populating members
     let status = 0, groupCount = 0;
     let groupName = "";
     let nameCount = 0;
@@ -379,11 +380,18 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
     let members = await Group.findById(req.body.groupId).populate('members');
     members = members.members;
 
+    let allGroups = await Group.findById(req.body.groupId)
+    .populate({
+        path: 'members'
+    }).exec();
+
+    allGroups = nameJoinedGroups(allGroups, req.user._id);
+
     res.status(200).json({
         status: 'success',
         data: messages,
-        members,
-        showChatHead: seenBy
+        group: allGroups,
+        showChatHead: showChatHead
     })
 })
 
