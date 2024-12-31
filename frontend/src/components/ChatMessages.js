@@ -61,6 +61,11 @@ const ChatMessages = (props) => {
       console.error(err.message);
     })
   }
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      document.getElementById("send-message").click();
+    }
+  };
 
   const sendGroupMessage = (id)=>{
     let temp = messageText;
@@ -368,11 +373,13 @@ const ChatMessages = (props) => {
   <Form.Control
     type="text"
     value={messageText}
+    onKeyDown={handleKeyDown}
     onChange={changeMessageText}
     placeholder="Type a message"
     className="rounded-pill"
   />
   <Button 
+    id="send-message"
     variant="primary" 
     onClick={() => sendGroupMessage(props.groupId)}
     className="rounded-circle ms-2 d-flex align-items-center justify-content-center"
