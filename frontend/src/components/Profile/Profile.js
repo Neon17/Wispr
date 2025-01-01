@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import defaultimg from './default.jpg';
+import UploadProfilePicture from "../UploadProfilePicture";
 import { Modal, Button, Image, ListGroup } from 'react-bootstrap';
 export default function Profile() {
   const [show, setShow] = useState(false);
@@ -8,7 +9,30 @@ export default function Profile() {
   const [profile, setProfile] = useState({});
   const [friends, setFriends] = useState([]);
   const [unknowns, setUnknowns] = useState([]);
-
+    const submitForm = async () => {
+          var form = document.getElementById("myProfilePictureForm123");
+          var fd = new FormData();
+          let files = document.getElementById('imageInput').files[0];
+          fd.append('userProfile', files);
+          const axiosConfig = {
+              headers: {
+                  "Authorization": `Bearer ${localStorage.getItem('token')}`
+              }
+          }
+          const response = await axios.post("http://localhost:5000/api/v1/users/uploadProfilePicture",
+              fd, {
+              headers: {
+                  "Authorization": `Bearer ${localStorage.getItem('token')}`
+              }
+          })
+          if (response.data.status != 'success') {
+              throw new Error(response.data.message);
+          }
+          else{
+            window.location.reload();
+          }
+          console.log(response);
+      }
   useEffect(() => {
     // Fetch friends from an API or define them statically
     const fetchFriends = async () => {
@@ -36,8 +60,7 @@ export default function Profile() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setShow(false);
-    // Logic to handle profile update (e.g., API call)
-    console.log("Profile updated!");
+
   };
 
   useEffect(() => {
@@ -85,6 +108,7 @@ export default function Profile() {
       <div className="card p-4 shadow-lg" style={{ animation: 'slideInUp 0.5s' }}>
         <div className="row">
           <div className="col-md-3">
+           
             <img
               src={`http://localhost:5000/profileImages/${profile.profilePicture}` || imagePreview || defaultimg}
               alt="Profile"
@@ -106,14 +130,13 @@ export default function Profile() {
           </div>
         </div>
       </div>
-
       {/* Edit Profile Modal */}
       <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Edit Profile</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}  id='myProfilePictureForm123' method="POST" encType="multipart/form-data">
             {/* Profile Image Upload */}
             <div className="text-center mb-3">
               <div className="position-relative d-inline-block rounded-circle bg-light border" style={{ width: '100px', height: '100px', objectFit: 'cover' }}>
@@ -126,6 +149,8 @@ export default function Profile() {
                 <label className="btn btn-primary btn-sm position-absolute bottom-0 end-0">
                   <i className=" fa fa-upload"></i>
                   <input
+                    id="imageInput"
+                    name="userProfile" 
                     type="file"
                     className="d-none"
                     onChange={handleImageChange}
@@ -199,7 +224,7 @@ export default function Profile() {
               <button type="button" className="btn btn-secondary me-2" onClick={() => setShow(false)}>
                 Cancel
               </button>
-              <button type="submit" className="btn btn-primary">
+              <button type="submit" onClick={submitForm} className="btn btn-primary">
                 Save Changes
               </button>
             </div>
