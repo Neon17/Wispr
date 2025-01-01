@@ -98,7 +98,7 @@ const ChatMessages = (props) => {
 
   return (
     <>
-    <div className='border m-5 d-flex flex-column justify-content-between' style={{  }}>
+    <div className='m-2 m-md-5 p-2 p-md-5 d-flex flex-column justify-content-between' style={{height: '86vh' }}>
     {/* header */}
     <div className="bg-white border-b p-3">
       <Container fluid>

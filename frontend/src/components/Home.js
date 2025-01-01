@@ -165,11 +165,11 @@ const App = () => {
             <div className="d-md-none p-2 bg-light border-bottom">
               <Button 
                 variant="outline-primary" 
-                className="px-3" 
+                className="btn px-3 d-flex align-items-center" 
                 onClick={handleBackToList}
               >
-                <i className="fa fa-arrow-left me-2"></i>
-                Back to Chats
+                <i className="fa fa-chevron-left me-2"></i>
+                <span>Back to Chats</span>
               </Button>
             </div>
 
