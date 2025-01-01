@@ -98,7 +98,7 @@ const ChatMessages = (props) => {
 
   return (
     <>
-    <div className='border m-5 d-flex flex-column justify-content-between' style={{ width: '65%' }}>
+    <div className='border m-5 d-flex flex-column justify-content-between' style={{  }}>
     {/* header */}
     <div className="bg-white border-b p-3">
       <Container fluid>
@@ -370,6 +370,8 @@ const ChatMessages = (props) => {
                 <i className="fas fa-smile text-primary"></i>
               </Button>
             </div>
+
+            
   <Form.Control
     type="text"
     value={messageText}

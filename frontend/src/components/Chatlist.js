@@ -83,7 +83,7 @@ const ChatList = (props) => {
   // Render user list
   return (
 
-    <div className="p-2 d-flex flex-column  mt-5 border bg-white rounded-3 shadow-sm ms-3" style={{ width: '30%', height:"81vh", maxWidth: '500px' }}>
+    <div className="p-2 d-flex flex-column  mt-5 border bg-white rounded-3 shadow-sm ms-3" style={{ height:"81vh" }}>
       {/* Search Box */}
       <div className="position-sticky top-0 bg-white rounded-top-3" style={{ zIndex: 1020 }}>
         <div className="p-3">
