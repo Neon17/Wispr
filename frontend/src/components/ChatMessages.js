@@ -98,7 +98,7 @@ const ChatMessages = (props) => {
 
   return (
     <>
-    <div className='m-2 m-md-5 p-2 p-md-5 d-flex flex-column justify-content-between' style={{height: '86vh' }}>
+    <div className='p-1 d-flex flex-column justify-content-between' style={{height: '86vh' }}>
     {/* header */}
     <div className="bg-white border-b p-3">
       <Container fluid>
@@ -139,11 +139,15 @@ const ChatMessages = (props) => {
       className={`message-wrapper d-flex align-items-end ${message.isUser ? 'flex-row-reverse' : ''} mb-4`}
     >
       <div className="position-relative mx-2">
-        <div
-          className="avatar-circle"
-        >
-          {message.senderId.firstName[0]}
-        </div>
+      {message.senderId.profilePicture &&
+  <img src={`http://localhost:5000//profileImages/${message.senderId.profilePicture}`} 
+       className="avatar-circle" alt="User Profile" />
+}
+{(!message.senderId.profilePicture) && (
+  <div className="avatar-circle">
+    {message.senderId.firstName[0]}
+  </div>
+)}
         <span className="online-indicator"></span>
       </div>
 
