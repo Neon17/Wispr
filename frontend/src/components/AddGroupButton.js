@@ -1,21 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { Modal } from 'react-bootstrap';
 
 const AddGroupButton = (props) => {
-    // State to manage the fetched users, selected users, group name, and modal visibility
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [groupName, setGroupName] = useState('');
     const [isFetching, setIsFetching] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(true); // Controls modal visibility
-    const [showExpandGroup, setShowExpandGroup] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
-    setInterval(() => {
-        setIsModalOpen(true);
-    }, 5000);
-
-    // Fetch users from the given API endpoint
     const fetchUsers = async () => {
         setIsFetching(true);
         try {
@@ -27,6 +21,7 @@ const AddGroupButton = (props) => {
             });
             if (response.data.status === 'success') {
                 setUsers(response.data.data);
+                setShowModal(true);
             } else {
                 console.error('Failed to fetch users:', response.data.message);
             }
@@ -34,131 +29,175 @@ const AddGroupButton = (props) => {
             console.error('Error fetching users:', error);
         } finally {
             setIsFetching(false);
-            if (showExpandGroup) setShowExpandGroup(false);
-            else setShowExpandGroup(true);
         }
     };
 
-    // Handle selection of users (check/uncheck)
     const handleUserSelection = (userId) => {
         setSelectedUsers((prevSelected) => {
             if (prevSelected.includes(userId)) {
-                return prevSelected.filter((id) => id !== userId); // Deselect user
-            } else {
-                return [...prevSelected, userId]; // Select user
+                return prevSelected.filter((id) => id !== userId);
             }
+            return [...prevSelected, userId];
         });
     };
 
-    // Handle group creation by sending POST request with selected users
     const createGroup = async () => {
-        if (!groupName || selectedUsers.length === 0) {
-            alert('Please enter a group name and select at least one user');
+        if (!groupName.trim()) {
+            alert('Please enter a group name');
+            return;
+        }
+        if (selectedUsers.length === 0) {
+            alert('Please select at least one user');
             return;
         }
 
         setIsLoading(true);
         try {
-            const payload = {
-                name: groupName,
-                id: selectedUsers,
-            };
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:5000/api/v1/users/addGroup', payload, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
+            const response = await axios.post(
+                'http://localhost:5000/api/v1/users/addGroup',
+                {
+                    name: groupName,
+                    id: selectedUsers,
                 },
-            });
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
             if (response.data.status === 'success') {
-                alert('Group created successfully!');
-                setGroupName('');
-                setSelectedUsers([]);
                 props.setStatus(true);
-                setIsModalOpen(false); // Close the modal after successful group creation
-                setShowExpandGroup(false);
-            } else {
-                alert('Error creating group!');
+                handleClose();
+                alert('Group created successfully!');
             }
         } catch (error) {
             console.error('Error creating group:', error);
-            alert('Error creating group!');
+            alert('Error creating group. Please try again.');
         } finally {
             setIsLoading(false);
         }
     };
 
+    const handleClose = () => {
+        setShowModal(false);
+        setGroupName('');
+        setSelectedUsers([]);
+    };
+
     return (
-        <div>
-            {isModalOpen && (
-                <div>
-                    <button onClick={fetchUsers} className="btn btn-primary mb-3" disabled={isFetching}>
-                        {isFetching ? 'Fetching Users...' : 'Add Group'}
-                    </button>
+        <>
+            {/* Add Group Button */}
+            <div className="d-flex flex-column align-items-center">
+                <style>
+                    {`
+                        .btn:hover:not(:disabled) {
+                        transform: translateY(-2px);
+                         }
+    `}
+                </style>
+                <button
+                    onClick={fetchUsers}
+                    className="btn rounded-circle d-flex flex-column align-items-center justify-content-center bg-primary text-white shadow-sm"
+                    style={{
+                        width: '60px',
+                        height: '60px',
+                        transition: 'transform 0.2s'
+                    }}
+                    disabled={isFetching}
+                >
+                    {isFetching ? (
+                        <span className="spinner-border spinner-border-sm" />
+                    ) : (
+                        <i className="fas fa-plus fa-lg" />
+                    )}
+                </button>
+                <span className="mt-2 text-muted small">Add Group</span>
+            </div>
 
-                    {isFetching && <p>Loading users...</p>}
-
-                    {/* Render fetched users with checkboxes */}
-                    {showExpandGroup && <div id='expandAddGroupButton1234'>
-
-                        {users.length > 0 && !isFetching && (
-                            <div>
-                                <div className="mb-3 z-depth-1">
-                                    <label htmlFor="groupName" className="form-label">
-                                        Group Name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        id="groupName"
-                                        className="form-control"
-                                        placeholder="Enter group name"
-                                        value={groupName}
-                                        onChange={(e) => setGroupName(e.target.value)}
-                                    />
-                                </div>
-
-                                <h5>Select Users to Add to Group</h5>
-                                <div className="list-group">
-                                    {users.map((user) => (
-                                        <div className="list-group-item" key={user._id}>
-                                            <div className="form-check">
-                                                <input
-                                                    type="checkbox"
-                                                    className="form-check-input"
-                                                    id={`user-${user._id}`}
-                                                    checked={selectedUsers.includes(user._id)}
-                                                    onChange={() => handleUserSelection(user._id)}
-                                                />
-                                                <label className="form-check-label" htmlFor={`user-${user._id}`}>
-                                                    {user.firstName} {user.lastName} ({user.username})
-                                                </label>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <button
-                                    className="btn btn-success mt-3"
-                                    onClick={createGroup}
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? 'Creating Group...' : 'Create Group'}
-                                </button>
-                            </div>
-                        )}
-
+            {/* Modal */}
+            <Modal
+                show={showModal}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+                size="lg"
+                centered
+            >
+                <Modal.Header closeButton className="bg-light">
+                    <Modal.Title>Create New Group</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="p-4">
+                    <div className="mb-4">
+                        <label htmlFor="groupName" className="form-label fw-bold">
+                            Group Name
+                        </label>
+                        <input
+                            type="text"
+                            id="groupName"
+                            className="form-control form-control-lg"
+                            placeholder="Enter group name"
+                            value={groupName}
+                            onChange={(e) => setGroupName(e.target.value)}
+                        />
                     </div>
 
-                    }
-                </div>
-            )}
-
-            {/* Optionally add a fallback in case the modal is closed */}
-            {!isModalOpen && (
-                <div className="alert alert-success" role="alert">
-                    Group created successfully! The modal is now closed.
-                </div>
-            )}
-        </div>
+                    <div className="mb-3">
+                        <h6 className="fw-bold mb-3">Select Members</h6>
+                        <div className="list-group" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                            {users.map((user) => (
+                                <div
+                                    key={user._id}
+                                    className="list-group-item list-group-item-action d-flex align-items-center p-3"
+                                    onClick={() => handleUserSelection(user._id)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <div className="form-check flex-grow-1">
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id={`user-${user._id}`}
+                                            checked={selectedUsers.includes(user._id)}
+                                            onChange={() => {}}
+                                        />
+                                        <label
+                                            className="form-check-label ms-2"
+                                            htmlFor={`user-${user._id}`}
+                                        >
+                                            <div className="fw-semibold">{`${user.firstName} ${user.lastName}`}</div>
+                                            <small className="text-muted">@{user.username}</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </Modal.Body>
+                <Modal.Footer className="bg-light">
+                    <button
+                        className="btn btn-secondary"
+                        onClick={handleClose}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="btn btn-primary"
+                        onClick={createGroup}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm me-2" />
+                                Creating Group...
+                            </>
+                        ) : (
+                            'Create Group'
+                        )}
+                    </button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 };
 

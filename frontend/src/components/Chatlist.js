@@ -99,7 +99,7 @@ const ChatList = (props) => {
         </div>
       </div>
       {/* Users Section */}
-      <AddGroupButton setStatus = {setStatus}/> 
+     
       {/* setStatus = true updates the groups and messages */}
    <div className="d-flex align-items-center justify-content-center pt-3 pb-2 border-top">
     <div className="pr-2">
@@ -131,6 +131,7 @@ const ChatList = (props) => {
             WebkitOverflowScrolling: 'touch', // Enable smooth scrolling on iOS
           }}
         >
+           <AddGroupButton setStatus = {setStatus}/> 
           {Array.isArray(users) && users.map((user) => (
             <div
               key={user._id}
