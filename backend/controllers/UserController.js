@@ -160,6 +160,15 @@ exports.getAllFriendRequests = asyncErrorHandler((async(req,res,next)=>{
     })
 }))
 
+exports.getAllAddFriendRequests = asyncErrorHandler(async(req,res,next)=>{
+    let members = await User.findById(req.user._id).populate('add_friend_request').exec();
+    members = members.add_friend_requests;
+    res.status(200).json({
+        status: 'success',
+        data: members
+    })
+})
+
 exports.addFriend = asyncErrorHandler(async(req,res,next)=>{
     //It adds or confirms friend request
 
@@ -276,33 +285,38 @@ exports.fetchAllUsersExceptFriends = asyncErrorHandler(async(req,res,next)=>{
     let friends = req.user.friends;
     let add_friend_requests = req.user.add_friend_requests;
     let friend_requests = req.user.friend_requests;
+    console.log(friend_requests);
 
     let users = await User.find({});
     let copyUsers = JSON.parse(JSON.stringify(users));
     let selectedUser = [];
+    let friendStatus = 0;
+
     for (let i=0;i<users.length;i++){
-        copyUsers[i].friendStatus = 0;
+        friendStatus = 0;
         let c = 0;
         if (users[i]._id.toString()==req.user._id.toString()) continue;
         for (let j=0;j<friends.length;j++){
-            if (friends.toString()==users[i]._id.toString()){
-                c = 1;
+            if (friends[j].toString()==users[i]._id.toString()){
+                friendStatus = 3;
                 break;
             }
         }
-        if (c==1) continue;
-        for (let j=0;j<add_friend_requests;j++){
-            if (add_friend_requests[i].toString()==users[i]._id.toString()){
-                copyUsers[i].friendStatus = 1;
+        if (friendStatus==3) continue;
+        for (let j=0;j<add_friend_requests.length;j++){
+            if (add_friend_requests[j].toString()==users[i]._id.toString()){
+                friendStatus = 1;
             }
         }
-        for (let j=0;j<friend_requests;j++){
-            if (friend_requests[i].toString()==users[i]._id.toString()){
-                copyUsers[i].friendStatus = 2;
+        if (friendStatus != 1){
+            for (let j=0;j<friend_requests.length;j++){
+                if (friend_requests[j].toString()==users[i]._id.toString()){
+                    friendStatus = 2;
+                }
             }
         }
-        
-        if (c==0) selectedUser.push(copyUsers[i]);
+        copyUsers[i].friendStatus = friendStatus;
+        selectedUser.push(copyUsers[i]);
     }
     res.status(200).json({
         status: 'success',
@@ -342,6 +356,17 @@ exports.profile = asyncErrorHandler(async (req, res, next) => {
     res.status(200).json({
         status: 'success',
         data: req.user
+    })
+})
+
+exports.updateProfile = asyncErrorHandler(async(req,res,next)=>{
+    //only dob and bio is updated
+    let dob = req.body.dob;
+    let bio = req.body.bio;
+    let updatedUser = await User.findByIdAndUpdate(req.user._id, {dob, bio}, {new:true, runValidators: false});
+    res.status(200).json({
+        status: 'success',
+        data: updatedUser
     })
 })
 

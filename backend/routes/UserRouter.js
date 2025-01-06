@@ -20,11 +20,13 @@ userRouter.get('/fetchAllUnknownUsers',protect,userController.fetchAllUnknownUse
 userRouter.post('/addFriend',protect,userController.addFriend);
 userRouter.get('/getAllFriends',protect,userController.getAllFriends);
 userRouter.get('/getAllFriendRequests',protect,userController.getAllFriendRequests);
+userRouter.get('/getAllAddFriendRequests', protect, userController.getAllAddFriendRequests);
 userRouter.get('/fetchAllUsersExceptFriends',protect,userController.fetchAllUsersExceptFriends);
 
 //userProfile is name of input in form <input name="userProfile"> while posting
 userRouter.post('/uploadProfilePicture',protect, upload.single('userProfile'),userController.uploadProfilePicture);
 userRouter.get('/profile',protect,userController.profile);
+userRouter.patch('/updateProfile',protect,userController.updateProfile);
 
 userRouter.post('/createMessageRequest',protect,userController.createMessageRequest);
 userRouter.get('/getAllMessageRequest',protect,userController.getAllMessageRequest);

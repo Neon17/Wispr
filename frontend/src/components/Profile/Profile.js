@@ -18,7 +18,9 @@ export default function Profile() {
   });
   
     const submitForm = async () => {
-          var form = document.getElementById("myProfilePictureForm123");
+          //only dob and bio will be updated
+          var dob = document.getElementById("formdob1234").value;
+          var bio = document.getElementById("formbio1234").value;
           var fd = new FormData();
           let files = document.getElementById('imageInput').files[0];
           fd.append('userProfile', files);
@@ -28,18 +30,20 @@ export default function Profile() {
               }
           }
           const response = await axios.post("http://localhost:5000/api/v1/users/uploadProfilePicture",
-              fd, {
-              headers: {
-                  "Authorization": `Bearer ${localStorage.getItem('token')}`
-              }
-          })
+              fd, axiosConfig)
           if (response.data.status != 'success') {
               throw new Error(response.data.message);
           }
-          else{
-            window.location.reload();
+          else setStatus(true);
+          if (dob || bio){
+            const res = await axios.patch("http://localhost:5000/api/v1/users/updateProfile",
+                {dob,bio}, axiosConfig
+            )
+            if (res.data.status != 'success') {
+              throw new Error(res.data.message);
+            }
+            else setStatus(true);
           }
-          console.log(response);
       }
   useEffect(() => {
     // Fetch friends from an API or define them statically
@@ -95,6 +99,8 @@ export default function Profile() {
       .catch((err) => {
         console.error("Error fetching profile:", err.message);
       });
+
+    setStatus(false);
   }, [status]);
 
   useEffect(() => {
@@ -129,7 +135,7 @@ export default function Profile() {
               src={`http://localhost:5000/profileImages/${profile.profilePicture}` || imagePreview || defaultimg}
               alt="Profile"
               className="img-fluid rounded-circle  item-center shadow"
-              style={{ width: '250px', height: '250px', objectFit: 'cover', animation: 'zoomIn 0.5s' }}
+              style={{ width: '150px', height: '150px', objectFit: 'cover', animation: 'zoomIn 0.5s' }}
             />
           </div>
           <div className="col-md-7 d-flex align-items-center justify-content-between flex-column p-0">
@@ -137,7 +143,7 @@ export default function Profile() {
             <p className="text-muted" style={{ animation: 'fadeIn 1s' }}>{profile.username}</p>
             <p style={{ animation: 'fadeIn 1s' }}><i className="fs-5 bi bi-calendar"></i> {profile.dob}</p>
             <p style={{ animation: 'fadeIn 1s' }}><i className="fs-5 bi bi-person"></i> {profile.bio}</p>
-            <p style={{ animation: 'fadeIn 1s' }}><i className="fs-5 bi bi-envelope"></i> {profile.email}</p>
+            {/* <p style={{ animation: 'fadeIn 1s' }}><i className="fs-5 bi bi-envelope"></i> {profile.email}</p> */}
           </div>
           <div className="col-md-2 d-flex align-items-center justify-content-center">
             <button className="btn btn-outline-primary" onClick={() => setShow(true)} style={{ animation: 'fadeIn 1s' }}>
@@ -181,6 +187,7 @@ export default function Profile() {
               <div className="col">
                 <label className="form-label">First Name</label>
                 <input
+                  id="formfirstname1234"
                   type="text"
                   className="form-control"
                   defaultValue={profile.firstName}
@@ -190,6 +197,7 @@ export default function Profile() {
               <div className="col">
                 <label className="form-label">Middle Name</label>
                 <input
+                  id="formmiddlename1234"
                   type="text"
                   className="form-control"
                   defaultValue={profile.middleName}
@@ -198,6 +206,7 @@ export default function Profile() {
               <div className="col">
                 <label className="form-label">Last Name</label>
                 <input
+                  id="formlastname1234"
                   type="text"
                   className="form-control"
                   defaultValue={profile.lastName}
@@ -220,6 +229,7 @@ export default function Profile() {
             <div className="mb-3">
               <label className="form-label">Date of Birth</label>
               <input
+                id="formdob1234"
                 type="date"
                 className="form-control"
                 defaultValue={profile.dob}
@@ -231,6 +241,7 @@ export default function Profile() {
               <label className="form-label">Bio</label>
               <textarea
                 className="form-control"
+                id="formbio1234"
                 rows="4"
                 defaultValue={profile.bio}
               />
@@ -275,9 +286,16 @@ export default function Profile() {
               <div className="flex-grow-1">
                 <p className="mb-1">{unknown.firstName} {unknown.middleName} {unknown.lastName}</p>
               </div>
-              <button className="btn btn-primary" onClick={()=>addFriend(unknown._id)}>
-                {(unknown.friendStatus==1)?"Friend Request Sent":(unknown.friendStatus==2)?"Confirm Friend":"Add Friend"}
-              </button>
+              {(unknown.friendStatus==1) && 
+                <button className="btn btn-primary">
+                  Friend Request Sent
+                </button>
+              }
+              {(unknown.friendStatus!=1) && 
+                <button className="btn btn-primary" onClick={()=>addFriend(unknown._id)}>
+                  {(unknown.friendStatus==1)?"Friend Request Sent":(unknown.friendStatus==2)?"Confirm Friend":"Add Friend"}
+                </button>
+              }
               <Button variant="link" onClick={() => alert(`Viewing profile of ${unknown.firstName}`)} className="text-decoration-none">
                 <i className="fas fa-user fa-lg"></i>
               </Button>
