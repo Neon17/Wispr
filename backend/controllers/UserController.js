@@ -446,11 +446,12 @@ exports.addMemberInGroup = asyncErrorHandler(async (req, res, next) => {
 exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
     //req.body contains groupId
     if (!req.body.groupId) throw new Error('Message can only be seen in the group');
-    let groupMessages = await Message.find({ groupId: req.body.groupId })
-        .populate('senderId').exec();
+    let groupMessages = null;
+    groupMessages = await Message.find({ groupId: req.body.groupId })
+        .populate('senderId').lean();
     let group = await Group.findById(req.body.groupId).exec();
     let readStatus = [];
-    let messages = JSON.parse(JSON.stringify(groupMessages));
+    let messages = [];
     let defaultReadStatus = [];
 
     let seenBy = [];
@@ -463,12 +464,15 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
         else defaultReadStatus.push(false);
     }
 
+    for (i=0;i<groupMessages.length;i++){
+        groupMessages[i].isUser = false;
+    }
 
-    for (i = 0; i < messages.length; i++) {
+    for (i = 0; i < groupMessages.length; i++) {
 
-        if (messages[i].senderId._id.toString() == req.user._id.toString())
-            messages[i].isUser = true;
-        else messages[i].isUser = false;
+        groupMessages[i].isUser = groupMessages[i].senderId._id.equals(req.user._id);
+        // console.log(`After mutation [${i}]:`, groupMessages[i].isUser);
+        messages.push(groupMessages[i]);
 
         if (messages[i].readStatus.length == 0) {
             await Message.findByIdAndUpdate(messages[i]._id, { readStatus: defaultReadStatus });
@@ -484,7 +488,8 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
             await Message.findByIdAndUpdate(messages[i]._id, { readStatus: readStatus });
         }
     }
-    if (messages.length == 0) messages = null;
+    if (groupMessages.length == 0) messages = null;
+    if (messages.length==0) messages = null;
 
     //For Retrieving Seen
     let temp = 0, tempSeenBy = [];
@@ -534,6 +539,28 @@ exports.getAllMessages = asyncErrorHandler(async (req, res, next) => {
     //to get all members of group
     let members = await Group.findById(req.body.groupId).populate('members');
     members = members.members;
+
+    //we should not show seen chat head of our own(sender)
+    //but if new user is added or some user is deleted, it will cause error now
+    let hideOwnChatHead = [];
+    let c = 0;
+    for (i=0;i<showChatHead.length;i++){
+        temp = [];
+        if (typeof(showChatHead[i])=='string'){
+            hideOwnChatHead.push(showChatHead[i]);
+            continue;
+        }
+        for (j=0;j<showChatHead[i].length;j++){
+            if (showChatHead[i][j] && (members[j]._id.toString()==req.user._id.toString())){
+                temp.push(false);
+                continue;
+            }
+            temp.push(showChatHead[i][j]);
+        }
+        hideOwnChatHead.push(temp);
+    }
+
+    showChatHead = hideOwnChatHead;
 
     let allGroups = await Group.findById(req.body.groupId)
     .populate({

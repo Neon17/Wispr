@@ -14,7 +14,7 @@ const upload = multer({
         }
     }),
     fileFilter: (req, file, cb) => {
-        const allowedFileType = ["jpg", "jpeg", "png"];
+        const allowedFileType = ["jpg", "jpeg", "png","webp"];
         if (allowedFileType.includes(file.mimetype.split("/")[1])) {
             cb(null, true)
         } else {

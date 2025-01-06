@@ -233,8 +233,8 @@ export default function Profile() {
       <div className="friends-section mt-4" style={{ maxwidth: "20vw" }}>
         <h2>Friends</h2>
         <ListGroup >
-          {friends.map(friend => (
-            <ListGroup.Item key={friend.id} className="d-flex align-items-center">
+          {friends.map((friend,index) => (
+            <ListGroup.Item key={`0${index}`} className="d-flex align-items-center">
               {friend.profilePicture && <Image src={`http://localhost:5000/profileImages/${friend.profilePicture}`} roundedCircle width="50" height="50" className="me-3" />}
               {!friend.profilePicture && <Image src={`http://localhost:5000/profileImages/defaultImages/${friend.gender}Profile.png`} roundedCircle width="50" height="50" className="me-3" />}
               <div className="flex-grow-1">
@@ -251,8 +251,8 @@ export default function Profile() {
       <div className="friends-section mt-4" style={{ maxwidth: "20vw" }}>
         <h2>People you may know</h2>
         <ListGroup >
-          {unknowns.map(unknown => (
-            <ListGroup.Item key={unknown.id} className="d-flex align-items-center">
+          {unknowns.map((unknown,index) => (
+            <ListGroup.Item key={`1${index}`} className="d-flex align-items-center">
               {unknown.profilePicture && <Image src={`http://localhost:5000/profileImages/${unknown.profilePicture}`} roundedCircle width="50" height="50" className="me-3" />}
               {!unknown.profilePicture && <Image src={`http://localhost:5000/profileImages/defaultImages/${unknown.gender}Profile.png`} roundedCircle width="50" height="50" className="me-3" />}
               <div className="flex-grow-1">

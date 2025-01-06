@@ -34,10 +34,10 @@ const messageSchema = new mongoose.Schema({
     {toObject: { virtuals: true }}
 )
 
-messageSchema.virtual('isUser').get(function(id) {
-    if (id==undefined) return false;
-    return (this.senderId._id.toString==id.toString);
-});
+// messageSchema.virtual('isUser').get(function(id) {
+//     if (id==undefined) return false;
+//     return (this.senderId._id.toString()==id.toString());
+// });
 
 const Message = mongoose.model('Message',messageSchema);
 
