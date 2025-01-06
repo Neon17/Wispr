@@ -8,6 +8,15 @@ export default function Profile() {
   const [profile, setProfile] = useState({});
   const [friends, setFriends] = useState([]);
   const [unknowns, setUnknowns] = useState([]);
+  const [status, setStatus] = useState(false);
+
+  const [axiosConfig, setAxiosConfig] = useState({
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem('token')}`
+    }
+  });
+  
     const submitForm = async () => {
           var form = document.getElementById("myProfilePictureForm123");
           var fd = new FormData();
@@ -63,13 +72,6 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    const axiosConfig = {
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${localStorage.getItem('token')}`
-      }
-    };
-
     axios.get('http://localhost:5000/api/v1/users/profile', axiosConfig)
       .then((res) => {
         setProfile(res.data.data);
@@ -93,13 +95,28 @@ export default function Profile() {
       .catch((err) => {
         console.error("Error fetching profile:", err.message);
       });
-  }, []);
+  }, [status]);
 
   useEffect(() => {
     if (!localStorage.getItem('token')) {
       window.location.reload();
     }
   }, []);
+
+  const addFriend = (id)=>{
+    axios.post('http://localhost:5000/api/v1/users/addFriend',{
+        id
+      },
+      axiosConfig
+    )
+      .then((res)=>{
+        console.log("Added friend woohoo");
+        setStatus(true);
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+  }
 
   return (
     <div className="container pt-3" style={{ marginTop: '76px' }}>
@@ -258,7 +275,9 @@ export default function Profile() {
               <div className="flex-grow-1">
                 <p className="mb-1">{unknown.firstName} {unknown.middleName} {unknown.lastName}</p>
               </div>
-              <button className="btn btn-primary">Add Friend</button>
+              <button className="btn btn-primary" onClick={()=>addFriend(unknown._id)}>
+                {(unknown.friendStatus==1)?"Friend Request Sent":(unknown.friendStatus==2)?"Confirm Friend":"Add Friend"}
+              </button>
               <Button variant="link" onClick={() => alert(`Viewing profile of ${unknown.firstName}`)} className="text-decoration-none">
                 <i className="fas fa-user fa-lg"></i>
               </Button>

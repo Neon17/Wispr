@@ -167,6 +167,21 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
     "data": []
   ```
 
+#### Get All Non Friend Users
+
+- **Path:** `/fetchAllUsersExceptFriends`
+- **Method:** GET
+- **Purpose:** To display all users whom logged in user isn't friend of
+- **Result:**
+  ```json
+    "status": "success",
+    "data": []
+  ```
+  *All users are shown with adding **friendStatus** attribute*.
+  *If **friendStatus = 0** then, no one has added friend request*.
+  *If **friendStatus = 1** then, logged in user has sent friend request*.
+  *If **friendStatus = 2** then, that user has sent friend request to*.
+
 #### Show All Groups
 
 - **Path:** `/showAllGroupList`
@@ -185,7 +200,7 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
 
 - **Path:** `/fetchAllUnknownUsers`
 - **Method:** `GET`
-- **Purpose:** To get all new users whom logged in user hasn't joined chat or formed group with
+- **Purpose:** To get all users whom logged in user hasn't joined and started chat with
 
 ---
 
@@ -264,6 +279,7 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
   - **Path:** `getAllMessageRequest`
   - **Method:** GET
   - **Purpose:** To get all message requests of all unknown users
+  - **Result:** Group with populated Users also with **isSender** is returned. If **isSender** is **true**, then that logged in user sent message request and if **isSender** is **false**, someone sent message request to.
 
 #### Create Message Request
 

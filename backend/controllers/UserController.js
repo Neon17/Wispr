@@ -272,18 +272,37 @@ exports.addFriend = asyncErrorHandler(async(req,res,next)=>{
 })
 
 exports.fetchAllUsersExceptFriends = asyncErrorHandler(async(req,res,next)=>{
+    //we should not fetch ourselves
     let friends = req.user.friends;
+    let add_friend_requests = req.user.add_friend_requests;
+    let friend_requests = req.user.friend_requests;
+
     let users = await User.find({});
+    let copyUsers = JSON.parse(JSON.stringify(users));
     let selectedUser = [];
     for (let i=0;i<users.length;i++){
+        copyUsers[i].friendStatus = 0;
         let c = 0;
+        if (users[i]._id.toString()==req.user._id.toString()) continue;
         for (let j=0;j<friends.length;j++){
             if (friends.toString()==users[i]._id.toString()){
                 c = 1;
                 break;
             }
         }
-        if (c==0) selectedUser.push(users[i]);
+        if (c==1) continue;
+        for (let j=0;j<add_friend_requests;j++){
+            if (add_friend_requests[i].toString()==users[i]._id.toString()){
+                copyUsers[i].friendStatus = 1;
+            }
+        }
+        for (let j=0;j<friend_requests;j++){
+            if (friend_requests[i].toString()==users[i]._id.toString()){
+                copyUsers[i].friendStatus = 2;
+            }
+        }
+        
+        if (c==0) selectedUser.push(copyUsers[i]);
     }
     res.status(200).json({
         status: 'success',
