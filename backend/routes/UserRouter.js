@@ -26,4 +26,8 @@ userRouter.get('/fetchAllUsersExceptFriends',protect,userController.fetchAllUser
 userRouter.post('/uploadProfilePicture',protect, upload.single('userProfile'),userController.uploadProfilePicture);
 userRouter.get('/profile',protect,userController.profile);
 
+userRouter.post('/createMessageRequest',protect,userController.createMessageRequest);
+userRouter.get('/getAllMessageRequest',protect,userController.getAllMessageRequest);
+userRouter.post('/acceptMessageRequest',protect,userController.acceptMessageRequest);
+
 module.exports = userRouter;

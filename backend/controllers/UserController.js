@@ -65,6 +65,32 @@ const getJoinedGroups = asyncErrorHandler(async (req, res, next) => {
     return groups;
 })
 
+const excludeMessageRequest = (async(groups)=>{
+    let group2 = [];
+    groups.forEach((group)=>{
+        if (group.accept_status=="1")
+            group2.push(group);
+    })
+    return group2;
+})
+
+const getMessageRequest = (async(groups,id)=>{
+    //isSender = true or false
+    //sender means who sent the message request
+    //we can't modify mongoose object directly so need to make copy
+    let copyGroups = JSON.parse(JSON.stringify(groups));
+    let group2 = [];
+    copyGroups.forEach((group)=>{
+        if (group.accept_status!="1"){
+            if (group.accept_status==id.toString())
+                group.isSender = false;
+            else group.isSender = true;
+            group2.push(group);
+        }
+    })
+    return group2;
+})
+
 const getLatestMessages = (async (groups) => {
     let messages = [];
     let message;
@@ -303,7 +329,10 @@ exports.profile = asyncErrorHandler(async (req, res, next) => {
 exports.showAllGroupList = asyncErrorHandler(async (req, res, next) => {
     //It shows group list and latest message of each group
     let groups = await getJoinedGroups(req, res, next);
+    groups = await excludeMessageRequest(groups);
+    console.log(groups);
     groups = nameJoinedGroups(groups, req.user._id);
+    console.log(groups);
     let latestMessages = await getLatestMessages(groups);
     let ruStatus = await readUnreadMessage(latestMessages,req.user._id);
     res.status(200).json({
@@ -582,19 +611,38 @@ exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
     if (!req.body.groupId || !req.body.message) throw new Error('Non-empty message can only be sent with the group');
     let group = await Group.findById(req.body.groupId).populate('members');
     if (group.length == 0) throw new Error('Group with that ID doesnt exist');
+    let message = null;
     let readStatus = [];
-    for (let i = 0; i < group.members.length; i++) {
-        if (group.members[i]._id.toString() != req.user._id.toString()) {
-            readStatus.push(false);
+
+    if (group.accept_status=="1"){
+        for (let i = 0; i < group.members.length; i++) {
+            if (group.members[i]._id.toString() != req.user._id.toString()) {
+                readStatus.push(false);
+            }
+            else readStatus.push(true);
         }
-        else readStatus.push(true);
     }
-    let message = await Message.create({
-        groupId: req.body.groupId,
-        message: req.body.message,
-        senderId: req.user._id,
-        readStatus: readStatus
-    });
+    else {
+        if (group.accept_status==req.user._id.toString()){
+            throw new Error("Accept this message request first so that you can message with each other!");
+        }
+    }
+    if (readStatus.length>0){
+        message = await Message.create({
+            groupId: req.body.groupId,
+            message: req.body.message,
+            senderId: req.user._id,
+            readStatus: readStatus
+        });
+    }
+    else {
+        message = await Message.create({
+            groupId: req.body.groupId,
+            message: req.body.message,
+            senderId: req.user._id
+        }); 
+    }
+
     //after sending new message, group onlineStatus (delivery) is set false
     await Group.findByIdAndUpdate(group._id,{ onlineStatus: false });
     res.status(200).json({
@@ -602,3 +650,61 @@ exports.sendMessage = asyncErrorHandler(async (req, res, next) => {
         data: message
     })
 })
+
+exports.getAllMessageRequest = asyncErrorHandler(async(req,res,next)=>{
+    let groups = await getJoinedGroups(req,res,next);
+    groups = await nameJoinedGroups(groups, req.user._id);
+    groups = await getMessageRequest(groups, req.user._id);
+    res.status(200).json({
+        status: 'success',
+        data: groups
+    })
+})
+
+exports.acceptMessageRequest = asyncErrorHandler(async(req,res,next)=>{
+    if (!req.body.groupId) throw new Error("At least one group should be selected to accept request");
+    let group = await Group.findById(req.body.groupId);
+    if (!group) throw new Error("Group with that Id doesn't exists");
+    if (group.accept_status != req.user._id.toString())
+        throw new Error("Another user hasn't accepted your request");
+    group.accept_status = "1";
+    await group.save();
+    res.status(200).json({
+        status: 'success',
+        data: group
+    })
+})
+
+exports.createMessageRequest = asyncErrorHandler(async(req,res,next)=>{
+    //it is called once unfriend user starts to message or clicks send message requests
+    //after message request is created, we can use send message api
+    //receiver has to accept request to start chatting with sender
+
+    if (!req.body.id) throw new Error("At least one user is needed to send message request");
+
+
+    if (req.body.id == req.user._id) throw new Error("You can't create group with yourself");
+    let user = await User.findById(req.user._id);
+    if (user.length == 0) throw new Error("Selected User doesn't exists");
+    let previousGroups = await Group.find({});
+    let status = 0;
+
+    //It is necessary to check previousGroup formed because every direct message is treated as group here
+    previousGroups.map((previousGroup) => {
+        status = 0;
+        if (previousGroup.members.length == 2) {
+            if ((previousGroup.members[0].toString == req.body.id) || (previousGroup.members[1].toString == req.body.id))
+                throw new Error('That group already exists');
+        }
+    })
+    let group = await Group.create({
+        members: [req.user._id, req.body.id],
+        accept_status: req.body.id.toString()
+    })
+    return res.status(200).json({
+        status: 'success',
+        data: group
+    })
+})
+
+

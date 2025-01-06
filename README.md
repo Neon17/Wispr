@@ -248,6 +248,50 @@ Wispr is a modern, secure, and intuitive chat application  that transforms the w
     "message": "Second message is not that interesting"
   }
     ```
+
+---
+### Message Requests
+
+- The user who wants to send message to unknown user (that means which is not his/her friend) sends message requests. That user is termed as **Sender**. And the user who receives the request is termed as **Receiver**.
+- Sender cannot see Seen status,  Delivered Status, but only Sent Status
+- Receiver can see the Sender message but has to accept the conversation to start messaging with each other
+- Sender can only send message but without receiver's acceptance, it is like one way traffic with no Seen or Delivery Info
+
+
+
+#### Get All Message Requests
+
+  - **Path:** `getAllMessageRequest`
+  - **Method:** GET
+  - **Purpose:** To get all message requests of all unknown users
+
+#### Create Message Request
+
+  - **Path:** `createMessageRequest`
+  - **Method:** POST
+  - **Purpose:** To send message to unknown user (who is not friend) 
+  - **Body:** 
+    ```json
+    {
+      "id": "675a8928d009e139336104ba"
+    }
+    ```
+
+#### Accept Message Request
+
+  - **Path:** `acceptMessageRequest`
+  - **Method:** POST
+  - **Purpose:** To accept message request sent by unknown user (who is not friend)
+  - **Body:** 
+    ```json
+    {
+      "groupId": "677bd523321be56d69e69d1c"
+    }
+    ```
+  
+  ##### *Message is sent by `/sendMessage` API. But for user who has to accept message request should accept message request first, otherwise his/her message will not be sent*
+---
+
 #### Profile Information
 
 - **Path:** `/profile`
