@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Form, InputGroup, Button } from 'react-bootstrap';
 import AddGroupButton from './AddGroupButton';
+import config from '../config';
 
 const ChatList = (props) => {
   const [users, setUsers] = useState([]);
@@ -52,7 +53,7 @@ const ChatList = (props) => {
         return;
       }
 
-      const response = await axios.get('http://localhost:5000/api/v1/users/showAllGroupList', {
+      const response = await axios.get(config.endpoints.showAllGroupList, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
@@ -76,7 +77,7 @@ const ChatList = (props) => {
         return;
       }
 
-      const response = await axios.get('http://localhost:5000/api/v1/users/fetchAllUnknownUsers', {
+      const response = await axios.get(config.endpoints.fetchAllUnknownUsers, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
@@ -174,7 +175,7 @@ const ChatList = (props) => {
                 />
                 {user.profilePicture ? (
                   <img
-                    src={`http://localhost:5000/profileImages/${user.profilePicture}`}
+                    src={config.getProfileImageUrl(user.profilePicture)}
                     alt="Profile"
                     className="rounded-circle"
                     style={{

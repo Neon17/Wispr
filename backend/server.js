@@ -7,12 +7,18 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const axios = require('axios');
 
-dotenv.config({path: './config.env'});
+dotenv.config({path: './.env'});
 
 const httpServer = http.createServer(app);
+
+// Parse frontend URLs from environment variable (comma-separated)
+const frontendUrls = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : ["http://localhost:3000"];
+
 const io = new Server(httpServer, { 
   cors: {
-    origin: ["http://localhost:3000","http://192.168.1.9:3000"],
+    origin: frontendUrls,
     methods: ["GET","POST"]
   }
  });
@@ -51,7 +57,7 @@ io.on("connection", (socket) => {
         "Authorization": `Bearer ${message.token}`
       }
     };
-    axios.post("http://localhost:5000/api/v1/users/sendMessage",{
+    axios.post(`${process.env.BACKEND_URL || 'http://localhost:5000'}/api/v1/users/sendMessage`,{
       "groupId": message.groupId,
       "message": message.message
     }, axiosConfig).then((res)=>{

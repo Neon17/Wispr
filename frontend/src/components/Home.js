@@ -3,12 +3,11 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import io from 'socket.io-client';
 import ChatList from './Chatlist';
 import ChatMessages from './ChatMessages';
-
-const ENDPOINTS = ["http://localhost:5000", "http://192.168.1.9:5000"];
+import config from '../config';
 
 const App = () => {
   const [showChatList, setShowChatList] = useState(true);
-  var socket = io(ENDPOINTS[0]);
+  var socket = io(config.SOCKET_URL);
   const [text, setText] = useState("");
   let [status, setStatus] = useState(false);
   const [groupId, setGroupId] = useState(null);

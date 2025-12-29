@@ -1,6 +1,7 @@
 import { useEffect,useState } from "react";
 import axios from "axios";
 import { Form, InputGroup, Button,Container, Row, Col } from 'react-bootstrap';
+import config from '../config';
 
 const ChatMessages = (props) => {
   const [axiosConfig] = useState({
@@ -50,7 +51,7 @@ const ChatMessages = (props) => {
 
   const fetchMessages = ()=>{
     let id = props.groupId;
-    axios.post("http://localhost:5000/api/v1/users/getAllMessages",{
+    axios.post(config.endpoints.getAllMessages,{
       "groupId": id
     }, axiosConfig).then((res)=>{
       // console.log(res.data);
@@ -81,7 +82,7 @@ const ChatMessages = (props) => {
 
   const startChat = (id)=>{
     //It create group with that User (like making friends on Facebook)
-    axios.post("http://localhost:5000/api/v1/users/addGroup",{
+    axios.post(config.endpoints.addGroup,{
       "id": id,
     }, axiosConfig).then((res)=>{
       // console.log(res.data);
@@ -140,7 +141,7 @@ const ChatMessages = (props) => {
     >
       <div className="position-relative mx-2">
       {message.senderId.profilePicture &&
-  <img src={`http://localhost:5000//profileImages/${message.senderId.profilePicture}`} 
+  <img src={config.getProfileImageUrl(message.senderId.profilePicture)} 
        className="avatar-circle" alt="User Profile" />
 }
 {(!message.senderId.profilePicture) && (
@@ -172,13 +173,13 @@ const ChatMessages = (props) => {
               {ru && <span>{group.members[i].firstName} </span>} */}
               {ru && 
                 group.members[i].profilePicture && 
-                <img src={`http://localhost:5000//profileImages/${group.members[i].profilePicture}`} 
+                <img src={config.getProfileImageUrl(group.members[i].profilePicture)} 
                       className="float-end" width='20px' height='20px' style={{borderRadius: '50%', marginLeft: '1px'}} 
                       alt={`${group.members[i].firstName}`} title={`${group.members[i].firstName}`}/>
               }
               {ru && 
                 !group.members[i].profilePicture &&
-                <img src={`http://localhost:5000//profileImages/defaultImages/${group.members[i].gender}Profile.png`}
+                <img src={config.getDefaultProfileImageUrl(group.members[i].gender)}
                       className="float-end" width='20px' height='20px' style={{borderRadius: '50%', marginLeft: '1px'}} 
                       alt={`${group.members[i].firstName}`} title={`${group.members[i].firstName}`}/>
               }  

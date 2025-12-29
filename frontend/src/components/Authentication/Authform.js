@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
+import config from '../../config';
 
 const AuthForm = () => {
   let location = useLocation();
@@ -67,7 +68,7 @@ const AuthForm = () => {
       }
 
       if (isLogin){
-          axios.post('http://localhost:5000/api/v1/users/login', {
+          axios.post(config.endpoints.login, {
             "email": formData.email,
             "password": formData.password
           }, axiosConfig).then((res)=>{
@@ -90,7 +91,7 @@ const AuthForm = () => {
           });
       }
       else {
-        axios.post('http://localhost:5000/api/v1/users/signup', {
+        axios.post(config.endpoints.signup, {
           "firstName": formData.firstName,
           "middleName": formData.middleName,
           "lastName": formData.lastName,

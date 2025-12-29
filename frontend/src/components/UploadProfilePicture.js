@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import axios from 'axios';
+import config from '../config';
 
 function uploadProfilePicture(props) {
     const submitForm = async () => {
@@ -12,11 +13,11 @@ function uploadProfilePicture(props) {
                 "Authorization": `Bearer ${localStorage.getItem('token')}`
             }
         }
-        // const response = await fetch("http://localhost:5000/api/v1/users/uploadProfilePicture", {
+        // const response = await fetch(config.endpoints.uploadProfilePicture, {
         //     method: "POST",
         //     body: fd,
         // });
-        const response = await axios.post("http://localhost:5000/api/v1/users/uploadProfilePicture",
+        const response = await axios.post(config.endpoints.uploadProfilePicture,
             fd, {
             headers: {
                 "Authorization": `Bearer ${localStorage.getItem('token')}`

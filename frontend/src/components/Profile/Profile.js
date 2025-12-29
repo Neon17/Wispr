@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import defaultimg from './default.jpg';
 import { Modal, Button, Image, ListGroup } from 'react-bootstrap';
+import config from '../../config';
+
 export default function Profile() {
   const [show, setShow] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -29,14 +31,14 @@ export default function Profile() {
                   "Authorization": `Bearer ${localStorage.getItem('token')}`
               }
           }
-          const response = await axios.post("http://localhost:5000/api/v1/users/uploadProfilePicture",
+          const response = await axios.post(config.endpoints.uploadProfilePicture,
               fd, axiosConfig)
           if (response.data.status != 'success') {
               throw new Error(response.data.message);
           }
           else setStatus(true);
           if (dob || bio){
-            const res = await axios.patch("http://localhost:5000/api/v1/users/updateProfile",
+            const res = await axios.patch(config.endpoints.updateProfile,
                 {dob,bio}, axiosConfig
             )
             if (res.data.status != 'success') {
@@ -76,7 +78,7 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/v1/users/profile', axiosConfig)
+    axios.get(config.endpoints.profile, axiosConfig)
       .then((res) => {
         setProfile(res.data.data);
       })
@@ -84,7 +86,7 @@ export default function Profile() {
         console.error("Error fetching profile:", err.message);
       });
 
-    axios.get('http://localhost:5000/api/v1/users/getAllFriends', axiosConfig)
+    axios.get(config.endpoints.getAllFriends, axiosConfig)
       .then((res) => {
         setFriends(res.data.data);
       })
@@ -92,7 +94,7 @@ export default function Profile() {
         console.error("Error fetching profile:", err.message);
       });
 
-    axios.get('http://localhost:5000/api/v1/users/fetchAllUsersExceptFriends', axiosConfig)
+    axios.get(config.endpoints.fetchAllUsersExceptFriends, axiosConfig)
       .then((res) => {
         setUnknowns(res.data.data);
       })
@@ -110,7 +112,7 @@ export default function Profile() {
   }, []);
 
   const addFriend = (id)=>{
-    axios.post('http://localhost:5000/api/v1/users/addFriend',{
+    axios.post(config.endpoints.addFriend,{
         id
       },
       axiosConfig
@@ -132,7 +134,7 @@ export default function Profile() {
           <div className="col-md-3">
            
             <img
-              src={`http://localhost:5000/profileImages/${profile.profilePicture}` || imagePreview || defaultimg}
+              src={config.getProfileImageUrl(profile.profilePicture) || imagePreview || defaultimg}
               alt="Profile"
               className="img-fluid rounded-circle  item-center shadow"
               style={{ width: '150px', height: '150px', objectFit: 'cover', animation: 'zoomIn 0.5s' }}
@@ -163,7 +165,7 @@ export default function Profile() {
             <div className="text-center mb-3">
               <div className="position-relative d-inline-block rounded-circle bg-light border" style={{ width: '100px', height: '100px', objectFit: 'cover' }}>
                 <img
-                  src={imagePreview || `http://localhost:5000/profileImages/${profile.profilePicture}` || defaultimg}
+                  src={imagePreview || config.getProfileImageUrl(profile.profilePicture) || defaultimg}
                   alt="Preview"
                   className="rounded-circle "
                   style={{ width: '100px', height: '100px', objectFit: 'cover' }}
@@ -263,8 +265,8 @@ export default function Profile() {
         <ListGroup >
           {friends.map((friend,index) => (
             <ListGroup.Item key={`0${index}`} className="d-flex align-items-center">
-              {friend.profilePicture && <Image src={`http://localhost:5000/profileImages/${friend.profilePicture}`} roundedCircle width="50" height="50" className="me-3" />}
-              {!friend.profilePicture && <Image src={`http://localhost:5000/profileImages/defaultImages/${friend.gender}Profile.png`} roundedCircle width="50" height="50" className="me-3" />}
+              {friend.profilePicture && <Image src={config.getProfileImageUrl(friend.profilePicture)} roundedCircle width="50" height="50" className="me-3" />}
+              {!friend.profilePicture && <Image src={config.getDefaultProfileImageUrl(friend.gender)} roundedCircle width="50" height="50" className="me-3" />}
               <div className="flex-grow-1">
                 <p className="mb-1">{friend.firstName} {friend.middleName} {friend.lastName}</p>
               </div>
@@ -281,8 +283,8 @@ export default function Profile() {
         <ListGroup >
           {unknowns.map((unknown,index) => (
             <ListGroup.Item key={`1${index}`} className="d-flex align-items-center">
-              {unknown.profilePicture && <Image src={`http://localhost:5000/profileImages/${unknown.profilePicture}`} roundedCircle width="50" height="50" className="me-3" />}
-              {!unknown.profilePicture && <Image src={`http://localhost:5000/profileImages/defaultImages/${unknown.gender}Profile.png`} roundedCircle width="50" height="50" className="me-3" />}
+              {unknown.profilePicture && <Image src={config.getProfileImageUrl(unknown.profilePicture)} roundedCircle width="50" height="50" className="me-3" />}
+              {!unknown.profilePicture && <Image src={config.getDefaultProfileImageUrl(unknown.gender)} roundedCircle width="50" height="50" className="me-3" />}
               <div className="flex-grow-1">
                 <p className="mb-1">{unknown.firstName} {unknown.middleName} {unknown.lastName}</p>
               </div>

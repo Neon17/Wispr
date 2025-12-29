@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Modal } from 'react-bootstrap';
+import config from '../config';
 
 const AddGroupButton = (props) => {
     const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ const AddGroupButton = (props) => {
         setIsFetching(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/api/v1/users/fetchAllUnknownUsers', {
+            const response = await axios.get(config.endpoints.fetchAllUnknownUsers, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -55,7 +56,7 @@ const AddGroupButton = (props) => {
         try {
             const token = localStorage.getItem('token');
             const response = await axios.post(
-                'http://localhost:5000/api/v1/users/addGroup',
+                config.endpoints.addGroup,
                 {
                     name: groupName,
                     id: selectedUsers,

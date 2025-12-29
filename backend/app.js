@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const cors = require('cors');
+const dotenv = require('dotenv');
+
+dotenv.config({path: './.env'});
 
 const userRouter = require('./routes/UserRouter');
 
@@ -9,13 +12,19 @@ app.use(express.json());
 app.use(express.static('./public'));
 app.use(express.static(`${__dirname}/upload`));
 
+// Parse frontend URLs from environment variable (comma-separated)
+const frontendUrls = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+  : ["http://localhost:3000"];
+
+// Add /auth paths for each URL
+const corsOrigins = [
+  ...frontendUrls,
+  ...frontendUrls.map(url => `${url}/auth`)
+];
+
 const corsOptions = {
-  origin : [
-    "http://localhost:3000",
-    "http://192.168.1.9:3000",
-    "http://localhost:3000/auth",
-    "http://192.168.1.9:3000/auth"
-  ]
+  origin: corsOrigins
 }
 
 app.use(cors(corsOptions));
